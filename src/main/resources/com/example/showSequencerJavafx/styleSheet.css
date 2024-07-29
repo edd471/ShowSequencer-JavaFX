@@ -1,0 +1,32 @@
+.tableViewCleanBoth .scroll-bar:horizontal .increment-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanBoth .scroll-bar:vertical .increment-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanBoth .scroll-bar:horizontal .decrement-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanBoth .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: transparent !important;
+}
+
+
+.tableViewCleanHorizontal .scroll-bar:horizontal .increment-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanVertical .scroll-bar:vertical .increment-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanHorizontal .scroll-bar:horizontal .decrement-arrow {
+    -fx-background-color: transparent !important;
+}
+
+.tableViewCleanVertical .scroll-bar:vertical .decrement-arrow {
+    -fx-background-color: transparent !important;
+}

@@ -1,0 +1,224 @@
+package com.example.showSequencerJavafx;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.util.Duration;
+
+import java.io.File;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+public class CuesManager {
+
+
+    private int currentCueNum;
+    private final ObservableList<Cue> cues = FXCollections.observableArrayList();
+    private final ArrayList<Cue> cueClipboard = new ArrayList<>();
+    private final ObservableList<PlaylistFile> SFXFiles = FXCollections.observableArrayList();
+    private File sfxDirectory;
+    private double initialCueVolume;
+    private final Controller controller;
+    private final PlaylistManager playlistManager;
+
+
+
+    public CuesManager(Controller controller){
+        this.controller = controller;
+        this.playlistManager = controller.getPlaylistManager();
+
+        this.currentCueNum = -1;
+        this.cues.clear();
+        this.cueClipboard.clear();
+        this.SFXFiles.clear();
+        this.sfxDirectory = null;
+        this.initialCueVolume = -1;
+    }
+
+
+    public int getCurrentCueNum(){
+        return currentCueNum;
+    }
+
+    public void setCurrentCueVolume(double i) {
+        for(Cue cue : cues){
+            if(cue.getCueFile()!=null && cue.getCueCommand().equals(Controller.COMMAND.PLAY) && cue.getCueFile().getPlayer().getFadeProgress().get()==1){
+                cue.getCueFile().getPlayer().setVolume((cue.getCueVol().get()/100)*(i/100));
+            }
+        }
+    }
+
+    public double getInitialCueVolume() {
+        return initialCueVolume;
+    }
+
+    public void setInitialCueVolume(double i) {
+        initialCueVolume = i;
+    }
+
+    public ObservableList<PlaylistFile> getSFXFiles() {
+        return SFXFiles;
+    }
+
+    public ArrayList<Cue> getCueClipboard() {
+        return cueClipboard;
+    }
+
+    public ObservableList<Cue> getCues() {
+        return cues;
+    }
+
+    public void setSFXDirectory(File selectedDirectory){
+        sfxDirectory = selectedDirectory;
+
+        List<File> files = List.of(Objects.requireNonNull(selectedDirectory.listFiles()));
+        List<File> musicFiles = files.stream().filter(x -> x.getName().endsWith(".mp3") || x.getName().endsWith(".wav") || x.getName().endsWith(".mpeg")).toList();
+
+        SFXFiles.clear();
+        int i = 1;
+        for (File musicFile : musicFiles) {
+            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), controller.getPlaylistTable(), controller, controller.cueListVolumeSlider);
+            SFXFiles.add(newFile);
+            i++;
+        }
+    }
+
+    public File getSFXDirectory() {
+        return sfxDirectory;
+    }
+
+    public void pasteCue(int selectedIndex) {
+        getCues().set(selectedIndex, new Cue(cueClipboard.get(0)));
+    }
+
+    public void pasteCueAsNew(int selectionStart) {
+        int currentSelection = selectionStart;
+        for (Cue cue : cueClipboard){
+            cues.add(currentSelection, new Cue(cue));
+            currentSelection++;
+        }
+    }
+
+    public void copyCues(ObservableList<Cue> selectedItems) {
+        cueClipboard.clear();
+        for(Cue cue : selectedItems){
+            getCueClipboard().add(new Cue(cue));
+        }
+    }
+
+    public void addCue() {
+
+        Cue newCue = new Cue("0.0", "", -1, Controller.COMMAND.NONE, null, 75, 0, controller.getCueAudioTable(), controller);
+        if(controller.getCueAudioTable().getSelectionModel().getSelectedIndex()>=0){
+            cues.add(controller.getCueAudioTable().getSelectionModel().getSelectedIndex()+1,newCue);
+        } else {
+            cues.add(newCue);
+        }
+    }
+
+    public void removeCue(List<Cue> selectedCues) {
+        for (Cue cue : selectedCues) {
+            cue.stop();
+            cues.remove(cue);
+        }
+    }
+
+    public void next() {
+        if(currentCueNum<cues.size()-1){
+            if(currentCueNum ==-1) setInitialCueVolume(controller.cueListVolumeSlider.getValue());
+
+            if(currentCueNum >=0){cues.get(currentCueNum).setSelected(false);}
+
+            currentCueNum++;
+
+            if(currentCueNum>=0) {
+                cues.get(currentCueNum).setSelected(true);
+                cues.get(currentCueNum).run();
+            }
+
+        }
+    }
+
+    public void previous() {
+        if(currentCueNum >0){
+            cues.get(currentCueNum).setSelected(false);
+            cues.get(currentCueNum).backTrack();
+            currentCueNum--;
+
+            cues.get(currentCueNum).setSelected(true);
+            cues.get(currentCueNum).replay();
+
+
+        }else{
+            controller.cueListReset();
+        }
+    }
+
+    public void jumpTo(int selectedIndex) {
+        reset();
+
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event -> {
+            setInitialCueVolume(controller.cueListVolumeSlider.getValue());
+
+            currentCueNum = selectedIndex;
+
+            if(selectedIndex>0){
+                List<Cue> prevCues = getCues().subList(0, getCurrentCueNum());
+                List<Cue> volumeCues = new ArrayList<>();
+                for(Cue cue : prevCues){
+                    if(cue.getCueCommand().equals(Controller.COMMAND.VOLUME)){
+                        volumeCues.add(cue);
+                    }
+                }
+                if (!volumeCues.isEmpty()) {
+                    controller.cueListVolumeSlider.setValue(volumeCues.get(volumeCues.size()-1).getCueVol().get());
+                } else{
+                    controller.cueListVolumeSlider.setValue(initialCueVolume);
+                }
+            }
+
+            Cue nextCue = getCues().get(currentCueNum);
+
+            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(); nextCue.setSelected(true);}));
+            playDelay.play();
+        }));
+        delay.play();
+    }
+
+
+
+    public void reset() {
+        currentCueNum = -1;
+
+        for (Cue cue : cues) {
+            cue.setSelected(false);
+            cue.stop();
+        }
+        playlistManager.stop(controller.MIN_FADE_TIME);
+
+        ExponentialFade volFade = controller.getFades().remove("||CUELIST||");
+        if(volFade!=null) volFade.remove();
+
+        Timeline volChange = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event -> {
+            if(initialCueVolume>=0){
+                controller.cueListVolumeSlider.setValue(initialCueVolume);
+                initialCueVolume = -1;
+            }
+        }));
+        volChange.play();
+    }
+
+
+    public void stop(double duration) {
+        for (Cue cue : cues) {
+            if(cue.getCueFile()!=null){
+                cue.fade(duration);
+            }
+        }
+
+        playlistManager.pause(duration);
+    }
+}
