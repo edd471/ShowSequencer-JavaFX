@@ -12,14 +12,14 @@ public class MediaPlayerWrapper {
 
 
     private final MediaPlayer mediaPlayer;
-    private final Controller controller;
+    private final MainController mainController;
     private final SimpleDoubleProperty fadeProgress = new SimpleDoubleProperty(0);
     private final Slider slider;
 
 
-    public MediaPlayerWrapper(Media media, Controller controller, Slider slider) {
+    public MediaPlayerWrapper(Media media, MainController mainController, Slider slider) {
         this.mediaPlayer = new MediaPlayer(media);
-        this.controller = controller;
+        this.mainController = mainController;
         this.slider = slider;
     }
 
@@ -38,11 +38,11 @@ public class MediaPlayerWrapper {
 
     public void playFaded(double targetVol, double duration) {
 
-        ExponentialFade grow = new ExponentialFade(false, Math.max(duration, controller.MIN_FADE_TIME), 0, targetVol, mediaPlayer.toString(), controller);
+        ExponentialFade grow = new ExponentialFade(false, Math.max(duration, mainController.MIN_FADE_TIME), 0, targetVol, mediaPlayer.toString(), mainController);
         ChangeListener<Number> volListener = (Obs, oldValue, newValue)-> {
             if(slider!=null) mediaPlayer.setVolume(((Double) newValue/100) * (slider.getValue()/100));
             else mediaPlayer.setVolume((Double) newValue/100);
-            controller.refreshTables();
+            mainController.refreshTables();
         };
         grow.newVol.addListener(volListener);
         ChangeListener<Number> progressListener = (Obs, oldValue, newValue) -> fadeProgress.set((double)newValue);
@@ -63,11 +63,11 @@ public class MediaPlayerWrapper {
 
     public void pauseFaded(double startVol, double duration, Runnable onFinished){
 
-        ExponentialFade grow = new ExponentialFade(false, Math.max(duration, controller.MIN_FADE_TIME), startVol, 0, mediaPlayer.toString(), controller);
+        ExponentialFade grow = new ExponentialFade(false, Math.max(duration, mainController.MIN_FADE_TIME), startVol, 0, mediaPlayer.toString(), mainController);
         ChangeListener<Number> volListener = (Obs, oldValue, newValue)-> {
             if(slider!=null) mediaPlayer.setVolume(((Double) newValue/100) * (slider.getValue()/100));
             else mediaPlayer.setVolume((Double) newValue/100);
-            controller.refreshTables();
+            mainController.refreshTables();
         };
         grow.newVol.addListener(volListener);
         ChangeListener<Number> progressListener = (Obs, oldValue, newValue) -> fadeProgress.set((double)newValue);
@@ -91,11 +91,11 @@ public class MediaPlayerWrapper {
 
     public void stopFaded(double startVol, double duration, Runnable onFinished) {
 
-        ExponentialFade grow = new ExponentialFade(true, Math.max(duration, controller.MIN_FADE_TIME), startVol, 0, mediaPlayer.toString(), controller);
+        ExponentialFade grow = new ExponentialFade(true, Math.max(duration, mainController.MIN_FADE_TIME), startVol, 0, mediaPlayer.toString(), mainController);
         ChangeListener<Number> volListener = (Obs, oldValue, newValue)-> {
             if(slider!=null) mediaPlayer.setVolume(((Double) newValue/100) * (slider.getValue()/100));
             else mediaPlayer.setVolume((Double) newValue/100);
-            controller.refreshTables();
+            mainController.refreshTables();
         };
         grow.newVol.addListener(volListener);
         ChangeListener<Number> progressListener = (Obs, oldValue, newValue) -> fadeProgress.set((double)newValue);

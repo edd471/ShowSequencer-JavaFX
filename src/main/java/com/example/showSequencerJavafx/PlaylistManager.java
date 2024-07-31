@@ -18,11 +18,11 @@ public class PlaylistManager {
     private File playlistDirectory = null;
     private final ObservableList<PlaylistFile> playlistFiles = FXCollections.observableArrayList();
     private ChangeListener<Duration> playlistFileProgressListener;
-    private final Controller controller;
+    private final MainController mainController;
     public SimpleDoubleProperty progress = new SimpleDoubleProperty(0);
 
-    public PlaylistManager(Controller controller){
-        this.controller = controller;
+    public PlaylistManager(MainController mainController){
+        this.mainController = mainController;
     }
 
     public ObservableList<PlaylistFile> getPlaylistFiles() {
@@ -42,13 +42,13 @@ public class PlaylistManager {
     }
 
     public void setVolume(double volume) {
-        if(initVolume<0) initVolume = controller.playlistVolumeSlider.getValue();
-        controller.playlistVolumeSlider.setValue(volume);
+        if(initVolume<0) initVolume = mainController.playlistVolumeSlider.getValue();
+        mainController.playlistVolumeSlider.setValue(volume);
     }
 
     public void resetVolume() {
         if(initVolume>=0) {
-            controller.playlistVolumeSlider.setValue(initVolume);
+            mainController.playlistVolumeSlider.setValue(initVolume);
             initVolume = -1;
         }
     }
@@ -56,7 +56,7 @@ public class PlaylistManager {
     public void seekStart() {
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getPlayer().getStatus().equals(MediaPlayer.Status.PLAYING)){
-                playlistFile.getPlayer().pauseFaded(controller.playlistVolumeSlider.getValue(), controller.MIN_FADE_TIME);
+                playlistFile.getPlayer().pauseFaded(mainController.playlistVolumeSlider.getValue(), mainController.MIN_FADE_TIME);
             }
         }
     }
@@ -73,17 +73,17 @@ public class PlaylistManager {
     public void seekEnd() {
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(States.STATE.PLAYING)){
-                playlistFile.getPlayer().playFaded(controller.playlistVolumeSlider.getValue(), controller.MIN_FADE_TIME);
+                playlistFile.getPlayer().playFaded(mainController.playlistVolumeSlider.getValue(), mainController.MIN_FADE_TIME);
             }
         }
     }
 
     private void initiateTrack(double duration){
-        controller.assertValidFiles();
+        mainController.assertValidFiles();
 
         for(PlaylistFile file : playlistFiles){
             if(file.getState().equals(PlaylistFile.STATE.PLAYING) || file.getState().equals(PlaylistFile.STATE.PAUSED)) {
-                file.getPlayer().stopFaded(controller.playlistVolumeSlider.getValue() ,duration);
+                file.getPlayer().stopFaded(mainController.playlistVolumeSlider.getValue() ,duration);
                 file.setState(PlaylistFile.STATE.STOPPED);
                 file.setSelected(false);
                 file.getPlayer().currentTimeProperty().removeListener(playlistFileProgressListener);
@@ -92,15 +92,15 @@ public class PlaylistManager {
 
         PlaylistFile currentFile = playlistFiles.get(playListNumber);
 
-        currentFile.getPlayer().playFaded(controller.playlistVolumeSlider.getValue(), duration);
+        currentFile.getPlayer().playFaded(mainController.playlistVolumeSlider.getValue(), duration);
         progress.bind(currentFile.getProgress());
         currentFile.setState(PlaylistFile.STATE.PLAYING);
         currentFile.setSelected(true);
 
         playlistFileProgressListener = (Observable, oldValue, newValue) -> {
-            controller.playlistProgressBar.setProgress(newValue.toMillis()/currentFile.getPlayer().getTotalDuration().toMillis());
-            controller.playlistCurrentDuration.setText(String.format("%2d",(int)Math.floor(currentFile.getPlayer().getCurrentTime().toMinutes()))  + ":" + String.format("%02d", (int)Math.floor(currentFile.getPlayer().getCurrentTime().toSeconds()%60)));
-            controller.playlistTotalDuration.setText(String.format("%2d",(int)Math.floor(currentFile.getPlayer().getTotalDuration().toMinutes()))  + ":" + String.format("%02d", (int)Math.floor(currentFile.getPlayer().getMediaPlayer().getTotalDuration().toSeconds()%60)));
+            mainController.playlistProgressBar.setProgress(newValue.toMillis()/currentFile.getPlayer().getTotalDuration().toMillis());
+            mainController.playlistCurrentDuration.setText(String.format("%2d",(int)Math.floor(currentFile.getPlayer().getCurrentTime().toMinutes()))  + ":" + String.format("%02d", (int)Math.floor(currentFile.getPlayer().getCurrentTime().toSeconds()%60)));
+            mainController.playlistTotalDuration.setText(String.format("%2d",(int)Math.floor(currentFile.getPlayer().getTotalDuration().toMinutes()))  + ":" + String.format("%02d", (int)Math.floor(currentFile.getPlayer().getMediaPlayer().getTotalDuration().toSeconds()%60)));
         };
 
         currentFile.getPlayer().currentTimeProperty().addListener(playlistFileProgressListener);
@@ -132,7 +132,7 @@ public class PlaylistManager {
     public void play(double duration){
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(PlaylistFile.STATE.PAUSED)) {
-                playlistFile.getPlayer().playFaded(controller.playlistVolumeSlider.getValue(), duration);
+                playlistFile.getPlayer().playFaded(mainController.playlistVolumeSlider.getValue(), duration);
                 playlistFile.setState(PlaylistFile.STATE.PLAYING);
             }
         }
@@ -145,7 +145,7 @@ public class PlaylistManager {
     public void pause(double duration, Runnable onFinished){
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(PlaylistFile.STATE.PLAYING)) {
-                playlistFile.getPlayer().pauseFaded(controller.playlistVolumeSlider.getValue(), duration, onFinished);
+                playlistFile.getPlayer().pauseFaded(mainController.playlistVolumeSlider.getValue(), duration, onFinished);
                 playlistFile.setState(PlaylistFile.STATE.PAUSED);
             }
         }
@@ -159,7 +159,7 @@ public class PlaylistManager {
         for(PlaylistFile file : playlistFiles){
             if(file.getState().equals(PlaylistFile.STATE.PLAYING) || file.getState().equals(PlaylistFile.STATE.PAUSED) || file.getProgress().get()>0) {
                 progress.bind(file.getProgress());
-                file.getPlayer().stopFaded(controller.playlistVolumeSlider.getValue(), duration, onFinished);
+                file.getPlayer().stopFaded(mainController.playlistVolumeSlider.getValue(), duration, onFinished);
                 file.setState(PlaylistFile.STATE.STOPPED);
                 file.setSelected(false);
                 file.getPlayer().currentTimeProperty().removeListener(playlistFileProgressListener);
@@ -168,16 +168,16 @@ public class PlaylistManager {
 
         playListNumber = -1;
 
-        controller.playlistTotalDuration.setText("0:00");
-        controller.playlistCurrentDuration.setText("0:00");
-        controller.playlistProgressBar.setProgress(0);
+        mainController.playlistTotalDuration.setText("0:00");
+        mainController.playlistCurrentDuration.setText("0:00");
+        mainController.playlistProgressBar.setProgress(0);
     }
 
 
     void nextTrack(double duration){
-        if(controller.getPlaylistTable().getItems().isEmpty()) return;
+        if(mainController.getPlaylistTable().getItems().isEmpty()) return;
 
-        if(playListNumber>=controller.getPlaylistTable().getItems().size()-1) this.playListNumber=0;
+        if(playListNumber>= mainController.getPlaylistTable().getItems().size()-1) this.playListNumber=0;
         else {
             this.playListNumber++;
         }
@@ -191,11 +191,11 @@ public class PlaylistManager {
     }
 
     void prevTrack(double duration){
-        if(controller.getPlaylistTable().getItems().isEmpty()) return;
+        if(mainController.getPlaylistTable().getItems().isEmpty()) return;
 
         if(playListNumber<=0) playListNumber = playlistFiles.size()-1;
         else {
-            playlistFiles.get(playListNumber).getPlayer().stopFaded(controller.playlistVolumeSlider.getValue(), duration);
+            playlistFiles.get(playListNumber).getPlayer().stopFaded(mainController.playlistVolumeSlider.getValue(), duration);
             playListNumber--;
         }
 
@@ -219,25 +219,25 @@ public class PlaylistManager {
 
         int i = 1;
         for (File musicFile : musicFiles) {
-            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), controller.getPlaylistTable(), controller, controller.playlistVolumeSlider);
+            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), mainController.getPlaylistTable(), mainController, mainController.playlistVolumeSlider);
 
             newFile.getPlayer().setOnEndOfMedia(()->{
                 newFile.getPlayer().getMediaPlayer().stop();
-                nextTrack(controller.PLAYLIST_FADE_TIME);
+                nextTrack(mainController.PLAYLIST_FADE_TIME);
             });
 
             playlistFiles.add(newFile);
             i++;
         }
 
-        controller.getPlaylistTable().setItems(playlistFiles);
+        mainController.getPlaylistTable().setItems(playlistFiles);
     }
 
 
 
     void shuffle(){
 
-        List<PlaylistFile> items = new ArrayList<>(controller.getPlaylistTable().getItems().stream().toList());
+        List<PlaylistFile> items = new ArrayList<>(mainController.getPlaylistTable().getItems().stream().toList());
         Collections.shuffle(items);
         int i = 1;
         for (PlaylistFile item :items){
@@ -249,12 +249,12 @@ public class PlaylistManager {
         playlistFiles.clear();
         playlistFiles.addAll(items);
 
-        controller.getPlaylistTable().setItems(playlistFiles);
+        mainController.getPlaylistTable().setItems(playlistFiles);
 
-        controller.getPlaylistTable().refresh();
+        mainController.getPlaylistTable().refresh();
 
-        stop(controller.MIN_FADE_TIME);
-        controller.getPlaylistTable().scrollTo(0);
+        stop(mainController.MIN_FADE_TIME);
+        mainController.getPlaylistTable().scrollTo(0);
     }
 
 

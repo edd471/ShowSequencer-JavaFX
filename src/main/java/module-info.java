@@ -8,6 +8,7 @@ module com.example.showSequencerJavafx {
     requires javafx.base;
     requires java.sql;
     requires java.naming;
+    requires jssc;
 
     opens com.example.showSequencerJavafx to javafx.fxml;
     exports com.example.showSequencerJavafx;

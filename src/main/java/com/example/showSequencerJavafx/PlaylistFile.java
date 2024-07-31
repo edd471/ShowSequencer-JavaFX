@@ -16,7 +16,7 @@ public class PlaylistFile implements States{
     private boolean excluded;
     private STATE state = STATE.STOPPED;
     private final MediaPlayerWrapper mediaPlayerWrapper;
-    public final Controller controller;
+    public final MainController mainController;
     public final Slider slider;
     private boolean selected = false;
     public STATE getState() {
@@ -62,17 +62,17 @@ public class PlaylistFile implements States{
         return mediaPlayerWrapper;
     }
 
-    public PlaylistFile(String fileName, int playlistOrder, boolean excluded, String filePath, URI uri, TableView<PlaylistFile> tableView, Controller controller, Slider slider) {
+    public PlaylistFile(String fileName, int playlistOrder, boolean excluded, String filePath, URI uri, TableView<PlaylistFile> tableView, MainController mainController, Slider slider) {
         this.excluded = excluded;
         this.playlistOrder = playlistOrder;
         this.fileName = fileName;
         this.filePath = filePath;
         this.tableView = tableView;
-        this.controller = controller;
+        this.mainController = mainController;
         this.slider = slider;
 
         Media media = new Media(uri.toString());
-        this.mediaPlayerWrapper = new MediaPlayerWrapper(media, controller, this.slider);
+        this.mediaPlayerWrapper = new MediaPlayerWrapper(media, mainController, this.slider);
 
     }
 
@@ -83,11 +83,11 @@ public class PlaylistFile implements States{
         this.filePath = playlistFile.filePath;
         this.tableView = playlistFile.tableView;
         this.state = playlistFile.state;
-        this.controller = playlistFile.controller;
+        this.mainController = playlistFile.mainController;
         this.slider = playlistFile.slider;
         this.selected = false;
 
-        this.mediaPlayerWrapper = new MediaPlayerWrapper(playlistFile.mediaPlayerWrapper.getMedia(), controller, this.slider);
+        this.mediaPlayerWrapper = new MediaPlayerWrapper(playlistFile.mediaPlayerWrapper.getMedia(), mainController, this.slider);
 
     }
 

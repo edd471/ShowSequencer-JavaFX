@@ -19,7 +19,7 @@ public class ExponentialFade {
     double startVol;
     double targetVol;
     double duration;
-    Controller controller;
+    MainController mainController;
 
     public void setOnFinished(Runnable onFinished) {
         timeline.setOnFinished(event-> {
@@ -27,17 +27,17 @@ public class ExponentialFade {
             if(targetVol<=1){
                 newVol.set(startVol);
             }
-            controller.getFades().remove(fadeID, this);
+            mainController.getFades().remove(fadeID, this);
             progress.set(0);
         });
     }
 
-    public ExponentialFade(boolean forceFinish, double duration, double startVol, double targetVol, String fadeID, Controller controller) {
+    public ExponentialFade(boolean forceFinish, double duration, double startVol, double targetVol, String fadeID, MainController mainController) {
 
         this.fadeID = fadeID;
         this.startVol = startVol;
         this.targetVol = targetVol;
-        this.controller = controller;
+        this.mainController = mainController;
         this.newVol.set(startVol);
         this.progress.set(0.01);
         this.forceFinish = forceFinish;
@@ -124,7 +124,7 @@ public class ExponentialFade {
     }
 
     private void handlePreviousFade(){
-        ExponentialFade prevFade = controller.getFades().put(fadeID, this);
+        ExponentialFade prevFade = mainController.getFades().put(fadeID, this);
         if(prevFade==null) return;
 
         if((startVol<=targetVol)==(prevFade.startVol<=prevFade.targetVol) && startVol!=targetVol){

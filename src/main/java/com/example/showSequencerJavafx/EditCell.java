@@ -147,13 +147,13 @@ public class EditCell<S extends Cue, T> extends TableCell<S, T> {
 
         if(col.equals("cueVol")){
             setVisible(cue == null
-                    || cue.getCueCommand() == Controller.COMMAND.PLAY
-                    || cue.getCueCommand() == Controller.COMMAND.VOLUME
-                    || cue.getCueCommand() == Controller.COMMAND.PLAYLIST_START
-                    || cue.getCueCommand() == Controller.COMMAND.PLAYLIST_CONT);
+                    || cue.getCueCommand() == MainController.COMMAND.PLAY
+                    || cue.getCueCommand() == MainController.COMMAND.VOLUME
+                    || cue.getCueCommand() == MainController.COMMAND.PLAYLIST_START
+                    || cue.getCueCommand() == MainController.COMMAND.PLAYLIST_CONT);
         }else if (col.equals("cueTime")){
             setVisible(cue == null
-                    || cue.getCueCommand() != Controller.COMMAND.NONE);
+                    || cue.getCueCommand() != MainController.COMMAND.NONE);
         }
 
     }

@@ -9,6 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.*;
@@ -17,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -39,11 +41,12 @@ import java.util.*;
 import java.util.List;
 import java.util.prefs.Preferences;
 
-public class Controller implements Initializable {
+public class MainController implements Initializable {
 
-    public final double RUNSCREEN_FADE_TIME = 1;
-    public final double PLAYLIST_FADE_TIME = 1;
-    public final double MIN_FADE_TIME = 0.1;
+    public double RUNSCREEN_FADE_TIME = 1;
+    public double PLAYLIST_FADE_TIME = 1;
+    public double MIN_FADE_TIME = 0.1;
+    public final Map<COMMAND, Color> commandColorMap = new HashMap<>();
 
 
     private File projectFile = null;
@@ -54,7 +57,6 @@ public class Controller implements Initializable {
     private final Node[][] displayedCuesNodes = new Node[7][4];
     private final Map<ReadOnlyObjectProperty<Duration>, ChangeListener<Duration>> displayListeners = new HashMap<>(){};
     private boolean playlistControlPanelDisabled = true;
-
     private final PlaylistManager playlistManager = new PlaylistManager(this);
     private final CuesManager cuesManager = new CuesManager(this);
 
@@ -75,7 +77,7 @@ public class Controller implements Initializable {
     private VBox playlistControlPanel;
 
     @FXML
-    private MenuItem menuItemSaveShow;
+    private MenuItem menuItemSaveShow, menuItemPreferences;
 
     @FXML
     private TextField textDisplayCueTrack1, textDisplayCueTrack2, textDisplayCueTrack3, textDisplayCueTrack4, textDisplayCueVol1, textDisplayCueVol2, textDisplayCueVol3, textDisplayCueVol4;
@@ -179,6 +181,10 @@ public class Controller implements Initializable {
         refreshTables();
         refreshRunScreen();
 
+        for(COMMAND command : COMMAND.values()){
+            commandColorMap.put(command, Color.WHITE);
+        }
+
         comboBoxCueJump.setConverter(new StringConverter<>() {
             @Override
             public String toString(Cue cue) {
@@ -211,6 +217,8 @@ public class Controller implements Initializable {
 
 
         menuItemSaveShow.setDisable(true);
+        menuItemPreferences.setDisable(true);
+
 
         displayedCuesNodes[0][0] = textDisplayCueTrack1;
         displayedCuesNodes[0][1] = textDisplayCueTrack2;
@@ -436,6 +444,142 @@ public class Controller implements Initializable {
 
     }
 
+    private String colorToString(Color color) {
+        return String.format("#%02X%02X%02X%02X",
+                (int) (color.getRed() * 255),
+                (int) (color.getGreen() * 255),
+                (int) (color.getBlue() * 255),
+                (int) (color.getOpacity() * 255));
+    }
+
+    private Color stringToColor(String colorString) {
+        if (colorString.startsWith("#")) {
+            colorString = colorString.substring(1);
+        }
+
+        int red = Integer.parseInt(colorString.substring(0, 2), 16);
+        int green = Integer.parseInt(colorString.substring(2, 4), 16);
+        int blue = Integer.parseInt(colorString.substring(4, 6), 16);
+        int alpha = Integer.parseInt(colorString.substring(6, 8), 16);
+
+        return Color.rgb(red, green, blue, alpha / 255.0);
+    }
+
+    @FXML
+    protected void launchPreferences(){
+        new PreferencesScreen().open(this);
+    }
+
+    public void setPreferences(PreferencesController preferences){
+        MIN_FADE_TIME = preferences.minFadeTime;
+        RUNSCREEN_FADE_TIME = preferences.runScreenFadeTime;
+        PLAYLIST_FADE_TIME = preferences.playlistFadeTime;
+
+        commandColorMap.put(COMMAND.NONE, preferences.colorNone);
+        commandColorMap.put(COMMAND.PLAY, preferences.colorPLAY);
+        commandColorMap.put(COMMAND.STOP, preferences.colorSTOP);
+        commandColorMap.put(COMMAND.VOLUME, preferences.colorVOLUME);
+        commandColorMap.put(COMMAND.STOP_ALL, preferences.colorSTOP_ALL);
+        commandColorMap.put(COMMAND.PLAYLIST_START, preferences.colorPLAYLIST_START);
+        commandColorMap.put(COMMAND.PLAYLIST_CONT, preferences.colorPLAYLIST_CONT);
+        commandColorMap.put(COMMAND.PLAYLIST_FADE, preferences.colorPLAYLIST_FADE);
+
+        savePreferences();
+
+    }
+
+    public void savePreferences(){
+
+        try{
+            // Create a DocumentBuilder
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            // Create a new Document
+            Document document = builder.newDocument();
+
+            // Create root element
+            Element root = document.createElement("preferences");
+            document.appendChild(root);
+
+            // Create book elements and add text content
+            Element book1 = document.createElement("MIN_FADE_TIME");
+            book1.appendChild(document.createTextNode(String.valueOf(MIN_FADE_TIME)));
+            Element book2 = document.createElement("RUNSCREEN_FADE_TIME");
+            book2.appendChild(document.createTextNode(String.valueOf(RUNSCREEN_FADE_TIME)));
+            Element book3 = document.createElement("PLAYLIST_FADE_TIME");
+            book3.appendChild(document.createTextNode(String.valueOf(PLAYLIST_FADE_TIME)));
+
+            Element book4 = document.createElement("COMMAND_COLOURS");
+            int index = 0;
+            for(Color color : commandColorMap.values()){
+                Element command = document.createElement(commandColorMap.keySet().toArray()[index].toString());
+                command.appendChild(document.createTextNode(colorToString(color)));
+                book4.appendChild(command);
+                index++;
+            }
+
+            root.appendChild(book1);
+            root.appendChild(book2);
+            root.appendChild(book3);
+            root.appendChild(book4);
+
+            // Write to XML file
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(document);
+
+            if(!projectFile.exists()) {
+                throw new Exception("Save Error");
+            }
+
+            // Specify your local file path
+            StreamResult result = new StreamResult(projectFile + "/preferences");
+            transformer.transform(source, result);
+
+            refreshRunScreen();
+
+        }catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Save Failed");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+        }
+    }
+
+    private void loadPreferences(){
+        try{
+            // Create a DocumentBuilder
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+
+            // Parse the XML file
+            Document document = builder.parse(projectFile+"/preferences");
+
+            org.w3c.dom.Node minFadeNode = document.getElementsByTagName("MIN_FADE_TIME").item(0);
+            MIN_FADE_TIME = Double.parseDouble(minFadeNode.getTextContent());
+
+            org.w3c.dom.Node runScreenFadeNode = document.getElementsByTagName("RUNSCREEN_FADE_TIME").item(0);
+            RUNSCREEN_FADE_TIME = Double.parseDouble(runScreenFadeNode.getTextContent());
+
+            org.w3c.dom.Node playlistFadeNode = document.getElementsByTagName("PLAYLIST_FADE_TIME").item(0);
+            PLAYLIST_FADE_TIME = Double.parseDouble(playlistFadeNode.getTextContent());
+
+            NodeList nodeList = document.getElementsByTagName("COMMAND_COLOURS").item(0).getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                org.w3c.dom.Node command = nodeList.item(i);
+                commandColorMap.put(COMMAND.valueOf(command.getNodeName()), stringToColor(command.getTextContent()));
+            }
+
+        }catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Load Failed");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
+            newShow();
+
+        }
+    }
 
 
     @FXML
@@ -541,7 +685,7 @@ public class Controller implements Initializable {
     }
 
 
-    private void openShow(File selectedFile) {
+    private void openShow(File selectedFile){
 
 
         try{
@@ -584,15 +728,23 @@ public class Controller implements Initializable {
                 cuesManager.getCues().get(i).setCueFile(playlistFile);
             }
 
+
+
             cueListTableAudio.setItems(cuesManager.getCues());
             cueListTableFaders.setItems(cuesManager.getCues());
-            refreshTables();
-            playlistTable.refresh();
-            refreshRunScreen();
+
+
 
             preferences.put("ProjectFile", selectedFile.getAbsolutePath());
             projectFile = selectedFile;
             menuItemSaveShow.setDisable(false);
+            menuItemPreferences.setDisable(false);
+
+            loadPreferences();
+
+            refreshRunScreen();
+            refreshTables();
+            playlistTable.refresh();
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Project Loaded");
@@ -603,9 +755,7 @@ public class Controller implements Initializable {
             alert.setHeaderText("Load Failed");
             alert.setContentText(e.getLocalizedMessage());
             alert.showAndWait();
-
             newShow();
-
         }
     }
 
@@ -700,8 +850,11 @@ public class Controller implements Initializable {
 
             preferences.put("ProjectFile", saveDestination.getAbsolutePath());
             menuItemSaveShow.setDisable(false);
+            menuItemPreferences.setDisable(false);
             projectFile = saveDestination;
             ShowSequencer.getStage().setTitle(saveDestination.getName());
+
+            savePreferences();
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setHeaderText("Project Saved");
@@ -908,11 +1061,11 @@ public class Controller implements Initializable {
                 List<Cue> prevCues = new ArrayList<>(List.copyOf(cuesManager.getCues().subList(0, cuesManager.getCurrentCueNum())));
                 List<Cue> cuesToStop = new ArrayList<>();
                 for(Cue cue : prevCues){
-                    if(cue.getCueFile()!=null && cue.getCueCommand().equals(Controller.COMMAND.PLAY)) {
+                    if(cue.getCueFile()!=null && cue.getCueCommand().equals(MainController.COMMAND.PLAY)) {
                         cuesToStop.add(cue);
-                    }else if(cue.getCueFile()!=null && cue.getCueCommand().equals(Controller.COMMAND.STOP)) {
+                    }else if(cue.getCueFile()!=null && cue.getCueCommand().equals(MainController.COMMAND.STOP)) {
                         cuesToStop.stream().filter(x -> x.getCueFile().equals(cue.getCueFile())).findFirst().ifPresent(cuesToStop::remove);
-                    }else if(cue.getCueCommand().equals(Controller.COMMAND.STOP_ALL)){
+                    }else if(cue.getCueCommand().equals(MainController.COMMAND.STOP_ALL)){
                         cuesToStop.clear();
                     }
                 }
@@ -946,6 +1099,8 @@ public class Controller implements Initializable {
             else{
                 textNextCueCommand.setText("--None--");
             }
+            textNextCueCommand.setBackground(new Background(new BackgroundFill(commandColorMap.get(nextCue.getCueCommand()), new CornerRadii(3), Insets.EMPTY)));
+            textNextCueCommand.setBorder(new Border(new BorderStroke(Color.LIGHTGREY, BorderStrokeStyle.SOLID, new CornerRadii(3), BorderWidths.DEFAULT)));
             if(nextCue.getCueFile()!=null){
                 textNextCueAudioFile.setText(nextCue.getCueFile().getFileName());
             }

@@ -21,14 +21,14 @@ public class CuesManager {
     private final ObservableList<PlaylistFile> SFXFiles = FXCollections.observableArrayList();
     private File sfxDirectory;
     private double initialCueVolume;
-    private final Controller controller;
+    private final MainController mainController;
     private final PlaylistManager playlistManager;
 
 
 
-    public CuesManager(Controller controller){
-        this.controller = controller;
-        this.playlistManager = controller.getPlaylistManager();
+    public CuesManager(MainController mainController){
+        this.mainController = mainController;
+        this.playlistManager = mainController.getPlaylistManager();
 
         this.currentCueNum = -1;
         this.cues.clear();
@@ -45,7 +45,7 @@ public class CuesManager {
 
     public void setCurrentCueVolume(double i) {
         for(Cue cue : cues){
-            if(cue.getCueFile()!=null && cue.getCueCommand().equals(Controller.COMMAND.PLAY) && cue.getCueFile().getPlayer().getFadeProgress().get()==1){
+            if(cue.getCueFile()!=null && cue.getCueCommand().equals(MainController.COMMAND.PLAY) && cue.getCueFile().getPlayer().getFadeProgress().get()==1){
                 cue.getCueFile().getPlayer().setVolume((cue.getCueVol().get()/100)*(i/100));
             }
         }
@@ -80,7 +80,7 @@ public class CuesManager {
         SFXFiles.clear();
         int i = 1;
         for (File musicFile : musicFiles) {
-            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), controller.getPlaylistTable(), controller, controller.cueListVolumeSlider);
+            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), mainController.getPlaylistTable(), mainController, mainController.cueListVolumeSlider);
             SFXFiles.add(newFile);
             i++;
         }
@@ -111,9 +111,9 @@ public class CuesManager {
 
     public void addCue() {
 
-        Cue newCue = new Cue("0.0", "", -1, Controller.COMMAND.NONE, null, 75, 0, controller.getCueAudioTable(), controller);
-        if(controller.getCueAudioTable().getSelectionModel().getSelectedIndex()>=0){
-            cues.add(controller.getCueAudioTable().getSelectionModel().getSelectedIndex()+1,newCue);
+        Cue newCue = new Cue("0.0", "", -1, MainController.COMMAND.NONE, null, 75, 0, mainController.getCueAudioTable(), mainController);
+        if(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()>=0){
+            cues.add(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()+1,newCue);
         } else {
             cues.add(newCue);
         }
@@ -128,7 +128,7 @@ public class CuesManager {
 
     public void next() {
         if(currentCueNum<cues.size()-1){
-            if(currentCueNum ==-1) setInitialCueVolume(controller.cueListVolumeSlider.getValue());
+            if(currentCueNum ==-1) setInitialCueVolume(mainController.cueListVolumeSlider.getValue());
 
             if(currentCueNum >=0){cues.get(currentCueNum).setSelected(false);}
 
@@ -153,15 +153,15 @@ public class CuesManager {
 
 
         }else{
-            controller.cueListReset();
+            mainController.cueListReset();
         }
     }
 
     public void jumpTo(int selectedIndex) {
         reset();
 
-        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event -> {
-            setInitialCueVolume(controller.cueListVolumeSlider.getValue());
+        Timeline delay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event -> {
+            setInitialCueVolume(mainController.cueListVolumeSlider.getValue());
 
             currentCueNum = selectedIndex;
 
@@ -169,20 +169,20 @@ public class CuesManager {
                 List<Cue> prevCues = getCues().subList(0, getCurrentCueNum());
                 List<Cue> volumeCues = new ArrayList<>();
                 for(Cue cue : prevCues){
-                    if(cue.getCueCommand().equals(Controller.COMMAND.VOLUME)){
+                    if(cue.getCueCommand().equals(MainController.COMMAND.VOLUME)){
                         volumeCues.add(cue);
                     }
                 }
                 if (!volumeCues.isEmpty()) {
-                    controller.cueListVolumeSlider.setValue(volumeCues.get(volumeCues.size()-1).getCueVol().get());
+                    mainController.cueListVolumeSlider.setValue(volumeCues.get(volumeCues.size()-1).getCueVol().get());
                 } else{
-                    controller.cueListVolumeSlider.setValue(initialCueVolume);
+                    mainController.cueListVolumeSlider.setValue(initialCueVolume);
                 }
             }
 
             Cue nextCue = getCues().get(currentCueNum);
 
-            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(); nextCue.setSelected(true);}));
+            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(); nextCue.setSelected(true);}));
             playDelay.play();
         }));
         delay.play();
@@ -197,14 +197,14 @@ public class CuesManager {
             cue.setSelected(false);
             cue.stop();
         }
-        playlistManager.stop(controller.MIN_FADE_TIME);
+        playlistManager.stop(mainController.MIN_FADE_TIME);
 
-        ExponentialFade volFade = controller.getFades().remove("||CUELIST||");
+        ExponentialFade volFade = mainController.getFades().remove("||CUELIST||");
         if(volFade!=null) volFade.remove();
 
-        Timeline volChange = new Timeline(new KeyFrame(Duration.seconds(controller.MIN_FADE_TIME + 0.05), event -> {
+        Timeline volChange = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event -> {
             if(initialCueVolume>=0){
-                controller.cueListVolumeSlider.setValue(initialCueVolume);
+                mainController.cueListVolumeSlider.setValue(initialCueVolume);
                 initialCueVolume = -1;
             }
         }));
