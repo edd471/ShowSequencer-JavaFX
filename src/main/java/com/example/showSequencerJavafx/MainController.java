@@ -38,6 +38,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -509,6 +510,21 @@ public class MainController implements Initializable {
 
         return Color.rgb(red, green, blue, alpha / 255.0);
     }
+
+    @FXML
+    protected void testFaderDesk() throws InterruptedException {
+        ArrayList<Double> maxVol = new ArrayList<>();
+        ArrayList<Double> minVol = new ArrayList<>();
+        for (int i = 0; i < 32; i++) {
+            maxVol.add(10.0);
+            minVol.add(-41.0);
+        }
+
+        faderManager.runFaders(maxVol);
+        Thread.sleep(100);
+        faderManager.runFaders(minVol);
+    }
+
 
     @FXML
     protected void launchPreferences(){

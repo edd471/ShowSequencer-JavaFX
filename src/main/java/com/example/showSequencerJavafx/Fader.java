@@ -75,91 +75,71 @@ public class Fader {
 
         try {
 
-
-            List<Byte> message = getBytes(dbValue);
+            String message = getBytes(dbValue);
 
             SysexMessage msg = new SysexMessage();
-            byte[] byteArray = convertListToByteArray(message);
-            msg.setMessage(byteArray, message.size());
+
+            int len = message.length();
+            byte[] ans = new byte[len / 2];
+
+            for (int i = 0; i < len; i += 2) {
+                // using left shift operator on every character
+                ans[i / 2] = (byte) ((Character.digit(message.charAt(i), 16) << 4)
+                        + Character.digit(message.charAt(i+1), 16));
+            }
 
 
+            msg.setMessage(ans, ans.length);
 
             device.getReceiver().send(msg, -1);
-
 
 
         } catch (Exception e) {
             System.out.println(e);
         }
 
-
-
     }
 
-    public static byte[] convertListToByteArray(List<Byte> byteList) {
-        byte[] byteArray = new byte[byteList.size()];
-        for (int i = 0; i < byteList.size(); i++) {
-            byteArray[i] = byteList.get(i);
-        }
-        return byteArray;
-    }
+    private String getBytes(int dbValue) {
 
-    private List<Byte> getBytes(int dbValue) {
-
-        byte[] typeBytes;
+        String typeBytes = "";
 
         if(!isMix){
-            typeBytes = new byte[] {(byte) 0x3E, (byte) 0x12,(byte) 0x01,(byte) 0x00,(byte) 0x33,(byte) 0x00,(byte) 0x00}; //KInput Fader
+            typeBytes = "3E120100330000"; //KInput Fader
         }else{
-            typeBytes = new byte[] {(byte) 0x3E, (byte) 0x12,(byte) 0x01,(byte) 0x00,(byte) 0x4E,(byte) 0x00,(byte) 0x00}; //kMixFader Fader
+            typeBytes = "3E1201004E0000"; //kMixFader Fader
         }
 
-        List<Byte> message = new ArrayList<>();
+        String message = "";
 
-        message.add((byte) 0xF0); // Parameter Change
-        message.add((byte) 0x43);
+        message = message + "F043"; //Parameter Change
 
-        message.add((byte) 0x10); // Midi Channel
+        message = message + "10"; // Midi Channel
 
-        for (byte typeByte : typeBytes) {
-            message.add(typeByte);  //Type
-        }
+        message = message + typeBytes;
 
-        byte[] inputByte = intToNBytes(value, 2);
+        message = message + intToNBytes(value-1, 2); // Input Num
 
-        message.add(inputByte[0]); // Input Num
-        message.add(inputByte[1]);
+        message = message + intToNBytes(dbValue, 5);
 
-        byte[] dbByte = intToNBytes(dbValue, 5);
-
-        message.add(dbByte[0]); // dB Value
-        message.add(dbByte[1]);
-        message.add(dbByte[2]);
-        message.add(dbByte[3]);
-        message.add(dbByte[4]);
-
-        message.add((byte) 0xF7); // Termination
-
-        for (Byte b : message) {
-            System.out.printf("%02X ", b & 0xFF);
-        }
-        System.out.println();
+        message = message + "F7"; // Termination
 
         return message;
     }
 
-    public static byte[] intToNBytes(int number, int n) {
+    public static String intToNBytes(int number, int n) {
         if (n <= 0) {
             throw new IllegalArgumentException("Number of bytes must be positive");
         }
 
-        byte[] bytes = new byte[n];
+        StringBuilder result = new StringBuilder();
+
         for (int i = 0; i < n; i++) {
-            bytes[n - 1 - i] = (byte) (number & 0x7F); // Extract 7 bits at a time
-            number >>= 7; // Shift right by 7 bits
+            int currentByte = number & 0xFF; // Extract 8 bits
+            result.insert(0, String.format("%02X", currentByte)); // Convert to hex and prepend to the result
+            number >>= 8; // Shift right by 8 bits
         }
 
-        return bytes;
+        return result.toString();
     }
-
 }

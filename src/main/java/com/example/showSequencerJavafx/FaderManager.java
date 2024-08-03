@@ -61,6 +61,7 @@ public class FaderManager {
         if(faderList.isEmpty()) return;
 
         Runnable sysExTask = () -> {
+
             try{
                 device.open();
 
