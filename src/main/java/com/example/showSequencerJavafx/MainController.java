@@ -3,6 +3,7 @@ package com.example.showSequencerJavafx;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,7 +19,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -29,6 +29,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -59,7 +62,7 @@ public class MainController implements Initializable {
     private boolean playlistControlPanelDisabled = true;
     private final PlaylistManager playlistManager = new PlaylistManager(this);
     private final CuesManager cuesManager = new CuesManager(this);
-
+    private final FaderManager faderManager = new FaderManager();
 
     public enum COMMAND{ NONE, PLAY, STOP, VOLUME, STOP_ALL, PLAYLIST_START, PLAYLIST_CONT, PLAYLIST_FADE }
 
@@ -114,6 +117,14 @@ public class MainController implements Initializable {
     private TableColumn<Cue, SimpleDoubleProperty> cueVol;
     @FXML
     private TableColumn<Cue, Double> cueTime;
+    @FXML
+    private TableColumn<Cue, Double> fader1, fader2, fader3, fader4, fader5, fader6, fader7, fader8,
+            fader9, fader10, fader11, fader12, fader13, fader14, fader15, fader16, fader17, fader18,
+            fader19, fader20, fader21, fader22, fader23, fader24, fader25, fader26, fader27, fader28,
+            fader29, fader30, fader31, fader32;
+
+    private ArrayList<TableColumn<Cue, Double>> faderColumns;
+
 
     @FXML
     private TableView<Cue> cueListTableFaders;
@@ -175,11 +186,19 @@ public class MainController implements Initializable {
         return playlistManager;
     }
 
+    public FaderManager getFaderManager() {return faderManager;}
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
         refreshTables();
         refreshRunScreen();
+
+        faderColumns = new ArrayList<>(Arrays.asList(fader1, fader2, fader3, fader4, fader5, fader6, fader7, fader8,
+                fader9, fader10, fader11, fader12, fader13, fader14, fader15, fader16, fader17, fader18,
+                fader19, fader20, fader21, fader22, fader23, fader24, fader25, fader26, fader27, fader28,
+                fader29, fader30, fader31, fader32));
+
 
         for(COMMAND command : COMMAND.values()){
             commandColorMap.put(command, Color.WHITE);
@@ -393,6 +412,32 @@ public class MainController implements Initializable {
             cue.setCueTime(event.getNewValue());
         });
 
+        ObservableList<Double> doubleList = FXCollections.observableArrayList(Arrays.asList((double) -41, (double) -40, (double) -30, (double) -20, (double) -15, (double) -10,
+                (double) -7.5, (double) -5, (double) -3, (double) 0, (double) 3,
+                (double) 0, (double) 3, (double) 5, (double) 10));
+
+
+        for(TableColumn<Cue, Double> col : faderColumns){
+            col.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getFaderValues().get(faderColumns.indexOf(col))));
+            col.setCellFactory(x-> new ComboBoxTableCell<Cue, Double>(new StringConverter<Double>() {
+                @Override
+                public String toString(Double aDouble) {
+                    if(aDouble<-40) return "-∞";
+                    else return aDouble.toString();
+                }
+
+                @Override
+                public Double fromString(String s) {
+                    if(s.equals("-∞")) return (double) -41;
+                    else return Double.parseDouble(s);
+                }
+            }, doubleList));
+            col.setOnEditCommit(event-> {
+                Cue cue = event.getRowValue();
+                cue.getFaderValues().set(faderColumns.indexOf(col), event.getNewValue());
+            });
+        }
+
         playlistTable.setRowFactory(factory -> new StatusRow<>());
         playlistTable.setStyle("-fx-selection-bar: lightGrey");
 
@@ -475,6 +520,8 @@ public class MainController implements Initializable {
         RUNSCREEN_FADE_TIME = preferences.runScreenFadeTime;
         PLAYLIST_FADE_TIME = preferences.playlistFadeTime;
 
+        faderManager.setDevice(preferences.device);
+
         commandColorMap.put(COMMAND.NONE, preferences.colorNone);
         commandColorMap.put(COMMAND.PLAY, preferences.colorPLAY);
         commandColorMap.put(COMMAND.STOP, preferences.colorSTOP);
@@ -519,10 +566,46 @@ public class MainController implements Initializable {
                 index++;
             }
 
+            Element book5 = document.createElement("Faders");
+            for(Fader fader : faderManager.getFaderList()){
+                Element faderElement = document.createElement("fader");
+
+                Element faderNum = document.createElement("Num");
+                faderNum.appendChild(document.createTextNode(Integer.toString(fader.getFaderNum())));
+                faderElement.appendChild(faderNum);
+
+                Element faderName = document.createElement("Name");
+                faderName.appendChild(document.createTextNode(fader.getName()));
+                faderElement.appendChild(faderName);
+
+                Element faderIsMix = document.createElement("isMix");
+                faderIsMix.appendChild(document.createTextNode(Boolean.toString(fader.getIsMix())));
+                faderElement.appendChild(faderIsMix);
+
+                Element faderValue = document.createElement("value");
+                faderValue.appendChild(document.createTextNode(Integer.toString(fader.getValue())));
+                faderElement.appendChild(faderValue);
+
+                Element faderVisible = document.createElement("isVisible");
+                faderVisible.appendChild(document.createTextNode(Boolean.toString(fader.getIsVisible().get())));
+                faderElement.appendChild(faderVisible);
+
+                book5.appendChild(faderElement);
+            }
+
+            Element book6 = document.createElement("MidiDevice");
+            if(faderManager.getDevice()!=null){
+                book6.appendChild(document.createTextNode(faderManager.getDevice().getDeviceInfo().toString()));
+            }else{
+                book6.appendChild(document.createTextNode("null"));
+            }
+
             root.appendChild(book1);
             root.appendChild(book2);
             root.appendChild(book3);
             root.appendChild(book4);
+            root.appendChild(book5);
+            root.appendChild(book6);
 
             // Write to XML file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -570,6 +653,24 @@ public class MainController implements Initializable {
                 org.w3c.dom.Node command = nodeList.item(i);
                 commandColorMap.put(COMMAND.valueOf(command.getNodeName()), stringToColor(command.getTextContent()));
             }
+
+            NodeList faderList = document.getElementsByTagName("Faders").item(0).getChildNodes();
+            ArrayList<Fader> addList = new ArrayList<>();
+            for(int i=0; i<faderList.getLength(); i++){
+                NodeList faderChildren = faderList.item(i).getChildNodes();
+
+                Fader fader = new Fader(Integer.parseInt(faderChildren.item(0).getTextContent()), faderChildren.item(1).getTextContent(), Boolean.parseBoolean(faderChildren.item(2).getTextContent()),
+                        Integer.parseInt(faderChildren.item(3).getTextContent()), Boolean.parseBoolean(faderChildren.item(4).getTextContent()));
+                addList.add(fader);
+            }
+            faderManager.setFaderList(addList);
+
+            for(MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()){
+                if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent())){
+                    faderManager.setDevice(MidiSystem.getMidiDevice(info));
+                }
+            }
+
 
         }catch (Exception e){
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -726,6 +827,13 @@ public class MainController implements Initializable {
                         Double.parseDouble(cueChildren.item(6).getTextContent()),
                         cueListTableAudio, this));
                 cuesManager.getCues().get(i).setCueFile(playlistFile);
+
+                NodeList faderNodeList = cueChildren.item(7).getChildNodes();
+                for (int j = 0; j < faderNodeList.getLength(); j++) {
+                    org.w3c.dom.Node faderNode = faderNodeList.item(j);
+                    cuesManager.getCues().get(i).getFaderValues().set(j, Double.parseDouble(faderNode.getTextContent()));
+
+                }
             }
 
 
@@ -817,6 +925,16 @@ public class MainController implements Initializable {
                 Element time = document.createElement("CueTime");
                 time.appendChild(document.createTextNode(Double.toString(cue.getCueTime())));
 
+                Element faders = document.createElement("faders");
+
+                int i = 1;
+                for(double value : cue.getFaderValues()){
+                    Element faderNum = document.createElement("Fader" + i);
+                    faderNum.appendChild(document.createTextNode(String.valueOf(value)));
+                    faders.appendChild(faderNum);
+                    i++;
+                }
+
                 Element cueEntry = document.createElement("Cue");
                 cueEntry.appendChild(num);
                 cueEntry.appendChild(name);
@@ -825,6 +943,7 @@ public class MainController implements Initializable {
                 cueEntry.appendChild(file);
                 cueEntry.appendChild(vol);
                 cueEntry.appendChild(time);
+                cueEntry.appendChild(faders);
 
                 book3.appendChild(cueEntry);
             }

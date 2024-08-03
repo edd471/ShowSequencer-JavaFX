@@ -27,9 +27,10 @@ public class Cue implements States{
     private final MainController mainController;
     private final CuesManager cuesManager;
     private final PlaylistManager playlistManager;
+    private final FaderManager faderManager;
     private final SimpleDoubleProperty progress = new SimpleDoubleProperty(0);
     private boolean selected = false;
-
+    private ArrayList<Double> faderValues = new ArrayList<>();
 
 
     public Cue(String cueNum, String cueName, double cueAuto, MainController.COMMAND cueCommand, PlaylistFile cueFile, double cueVol, double cueTime, TableView<Cue> tableView, MainController mainController) {
@@ -43,6 +44,12 @@ public class Cue implements States{
         this.mainController = mainController;
         this.cuesManager = mainController.getCuesManager();
         this.playlistManager = mainController.getPlaylistManager();
+        this.faderManager = mainController.getFaderManager();
+
+
+        for(int i=0; i<32; i++){
+            faderValues.add((double) -41);
+        }
 
         setCueFile(cueFile);
         mainController.refreshTables();
@@ -52,6 +59,7 @@ public class Cue implements States{
         this.mainController = cue.mainController;
         this.cuesManager = mainController.getCuesManager();
         this.playlistManager = mainController.getPlaylistManager();
+        this.faderManager = mainController.getFaderManager();
 
         this.cueNum = cue.cueNum;
         this.cueName = cue.cueName;
@@ -63,6 +71,7 @@ public class Cue implements States{
         this.setState(STATE.STOPPED);
         this.progress.set(0);
         this.selected = false;
+        this.faderValues = new ArrayList<>(cue.faderValues);
 
         setCueFile(cue.cueFile.get());
         mainController.refreshTables();
@@ -74,6 +83,10 @@ public class Cue implements States{
 
     public void setSelected(boolean selected){this.selected = selected;}
 
+
+    public ArrayList<Double> getFaderValues(){
+        return faderValues;
+    }
 
     public String getCueNum() {
         return cueNum;
@@ -176,6 +189,7 @@ public class Cue implements States{
 
     public void run(boolean withAuto){
 
+        faderManager.runFaders(faderValues);
 
         if(cueAuto>=0 && withAuto){
             PauseTransition autoDelay = new PauseTransition(Duration.seconds(Math.max(cueAuto, 0.01)));
@@ -396,10 +410,12 @@ public class Cue implements States{
                 if(getCueFile()!=null){
                     getCueFile().getPlayer().stopFaded(cueVol.get(), 0, ()->run(false));
                 }
+                faderManager.runFaders(faderValues);
                 break;
             }
             case PLAYLIST_START: {
                 playlistManager.stop(mainController.MIN_FADE_TIME, ()->run(false));
+                faderManager.runFaders(faderValues);
                 break;
             }
         }

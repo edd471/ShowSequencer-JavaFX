@@ -1,22 +1,30 @@
 package com.example.showSequencerJavafx;
 
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
+import javafx.util.converter.IntegerStringConverter;
 
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class PreferencesController implements Initializable {
 
     private MainController mainController;
+    private FaderManager faderManager;
 
+    public MidiDevice device;
     public double minFadeTime, runScreenFadeTime, playlistFadeTime;
     public Color colorNone, colorPLAY, colorSTOP, colorVOLUME, colorSTOP_ALL, colorPLAYLIST_START, colorPLAYLIST_CONT, colorPLAYLIST_FADE;
 
@@ -25,12 +33,101 @@ public class PreferencesController implements Initializable {
     @FXML
     private ColorPicker pickerNONE, pickerPLAY, pickerSTOP, pickerVOLUME, pickerSTOP_ALL, pickerPLAYLIST_START, pickerPLAYLIST_CONT, pickerPLAYLIST_FADE;
     @FXML
+    private ComboBox<MidiDevice.Info> comboBoxMidiDevice;
+    @FXML
     private TableView<Fader> faderConfigTable;
+    @FXML
+    private TableColumn<Fader, Integer> colFaderNum;
+    @FXML
+    private TableColumn<Fader, String> colFaderName;
+    @FXML
+    private TableColumn<Fader, Boolean> colFaderType;
+    @FXML
+    private TableColumn<Fader, Integer> colFaderValue;
+    @FXML
+    private TableColumn<Fader, Boolean> colIsVisible;
+
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         mainController = PreferencesScreen.getMainController();
+        faderManager = mainController.getFaderManager();
+
+
+        colFaderNum.setCellValueFactory(new PropertyValueFactory<>("faderNum"));
+
+        colFaderName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colFaderName.setCellFactory(x-> new TextFieldTableCell<>(new StringConverter<>() {
+            @Override
+            public String toString(String s) {
+                return s;
+            }
+            @Override
+            public String fromString(String s) {
+                return s;
+            }
+        }));
+        colFaderName.setOnEditCommit(event->{
+            Fader fader = event.getRowValue();
+            fader.setName(event.getNewValue());
+        });
+
+        colFaderType.setCellValueFactory(new PropertyValueFactory<>("isMix"));
+        colFaderType.setCellFactory(x -> new ComboBoxTableCell<>(new StringConverter<>() {
+            @Override
+            public String toString(Boolean aBoolean) {
+                if (aBoolean) return "Mixer";
+                else return "Input";
+            }
+
+            @Override
+            public Boolean fromString(String s) {
+                return s.equals("Mixer");
+            }
+        }, FXCollections.observableArrayList(Arrays.asList(true, false))));
+        colFaderType.setOnEditCommit(event -> {
+            Fader fader = event.getRowValue();
+            fader.setIsMix(event.getNewValue());
+        });
+
+        colFaderValue.setCellValueFactory(new PropertyValueFactory<>("value"));
+        colFaderValue.setCellFactory(col-> new TextFieldTableCell<>(new IntegerStringConverter()));
+        colFaderValue.setOnEditCommit(event ->{
+            Fader fader = event.getRowValue();
+            if(event.getNewValue() == (int) event.getNewValue()){
+                fader.setValue(event.getNewValue());
+            }else{
+                fader.setValue(event.getOldValue());
+            }
+        });
+
+        colIsVisible.setCellValueFactory(x->x.getValue().getIsVisible());
+        colIsVisible.setCellFactory(CheckBoxTableCell.forTableColumn(colIsVisible));
+        colIsVisible.setOnEditCommit(event -> {
+            Fader fader = event.getRowValue();
+            fader.setIsVisible(event.getNewValue());
+        });
+
+
+        ObservableList<MidiDevice.Info> devices =  FXCollections.observableList(Arrays.stream(MidiSystem.getMidiDeviceInfo()).toList());
+        List<MidiDevice.Info> toRemove = devices.stream().filter(info -> {
+            try {
+                MidiDevice device = MidiSystem.getMidiDevice(info);
+                return device.getMaxTransmitters() == 0;
+            } catch (MidiUnavailableException e) {
+                return true;
+            }
+        }).toList();
+
+        devices = FXCollections.observableList(Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(toRemove::contains).toList()); //.filter(toRemove::contains).toList());
+        comboBoxMidiDevice.setItems(devices);
+
+        if(faderManager.getDevice()!=null){
+            comboBoxMidiDevice.getSelectionModel().select(faderManager.getDevice().getDeviceInfo());
+            midiDeviceChosen();
+        }
+
 
         txtMinFadeTime.setText(Double.toString(mainController.MIN_FADE_TIME));
         minFadeTime = mainController.MIN_FADE_TIME;
@@ -57,10 +154,28 @@ public class PreferencesController implements Initializable {
         colorPLAYLIST_FADE = mainController.commandColorMap.get(MainController.COMMAND.PLAYLIST_FADE);
     }
 
+    @FXML
+    protected void midiDeviceChosen(){
+        try {
+            faderManager.setFaderList(MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem()));
+            device = MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem());
+
+            faderConfigTable.setItems(faderManager.getFaderList());
+            faderConfigTable.refresh();
+
+        } catch (Exception e){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Connection to MIDI device failed");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
+
 
     @FXML
     protected void close(){
-        PreferencesScreen.getStage().close();
+        System.out.println(faderManager.getFaderList());
+        //PreferencesScreen.getStage().close();
     }
 
     @FXML

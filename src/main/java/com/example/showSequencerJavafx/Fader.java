@@ -1,45 +1,96 @@
 package com.example.showSequencerJavafx;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javafx.beans.property.SimpleBooleanProperty;
+
+import java.util.*;
 
 import javax.sound.midi.*;
 
 public class Fader {
 
+
     private int faderNum;
     private String name;
     private boolean isMix;
-    private int channelNumber;
+    private int value;
+    private MidiDevice device;
+    private final SimpleBooleanProperty isVisible = new SimpleBooleanProperty();
 
-    public Fader(int faderNum, String name, boolean isMix, int channelNumber){
+    public void setDevice(MidiDevice device){
+        this.device = device;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+    public void setFaderNum(int faderNum) {
+        this.faderNum = faderNum;
+    }
+
+    public String getName(){return name;}
+    public void setName(String name){this.name = name;}
+
+    public int getFaderNum() {
+        return faderNum;
+    }
+
+    public SimpleBooleanProperty getIsVisible(){
+        return isVisible;
+    }
+
+    public void setIsVisible(boolean b){
+        this.isVisible.set(b);
+    }
+
+
+    public boolean getIsMix() {
+        return isMix;
+    }
+
+    public void setIsMix(boolean isMix){
+        this.isMix = isMix;
+    }
+
+
+    public MidiDevice getDevice() {
+        return device;
+    }
+
+    public Fader(int faderNum, String name, boolean isMix, int value, boolean isVisible){
         this.faderNum = faderNum;
         this.name = name;
         this.isMix = isMix;
-        this.channelNumber = channelNumber;
+        this.value = value;
+        this.isVisible.set(isVisible);
+
     }
 
-    public void run() throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
+    public void run(int dbValue){
+        if(device==null) return;
 
-        MidiDevice.Info[] info = MidiSystem.getMidiDeviceInfo();
-        System.out.println(Arrays.toString(info));
-
-        MidiDevice device = MidiSystem.getMidiDevice(info[info.length-2]);
-        System.out.println(device.getDeviceInfo());
-
-        device.open();
-
-        List<Byte> message = getBytes();
+        try {
 
 
-        SysexMessage msg = new SysexMessage();
-        byte[] byteArray = convertListToByteArray(message);
-        msg.setMessage(byteArray, message.size());
+            List<Byte> message = getBytes(dbValue);
 
-        device.getReceiver().send(msg, -1);
+            SysexMessage msg = new SysexMessage();
+            byte[] byteArray = convertListToByteArray(message);
+            msg.setMessage(byteArray, message.size());
 
-        device.close();
+            device.getReceiver().send(msg, -1);
+
+
+
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+
+
 
     }
 
@@ -51,7 +102,8 @@ public class Fader {
         return byteArray;
     }
 
-    private List<Byte> getBytes() {
+    private List<Byte> getBytes(int dbValue) {
+
         byte[] typeBytes;
 
         if(!isMix){
@@ -59,7 +111,6 @@ public class Fader {
         }else{
             typeBytes = new byte[] {(byte) 0x3E, (byte) 0x12,(byte) 0x01,(byte) 0x00,(byte) 0x4E,(byte) 0x00,(byte) 0x00}; //kMixFader Fader
         }
-
 
         List<Byte> message = new ArrayList<>();
 
@@ -69,22 +120,28 @@ public class Fader {
         message.add((byte) 0x01); // Midi Channel
 
         for (byte typeByte : typeBytes) {
-            message.add(typeByte);
+            message.add(typeByte);  //Type
         }
 
-        message.add((byte) 0x00); // Input Num
-        message.add((byte) 0x00);
+        byte[] inputByte = intToTwoBytes(faderNum);
+
+        message.add(inputByte[1]); // Input Num
+
+        byte[] dbByte = intToTwoBytes(dbValue);
+
+        message.add(dbByte[0]); // dB Value
+        message.add(dbByte[1]);
 
         message.add((byte) 0xF7); // Termination
 
         return message;
     }
 
+    public static byte[] intToTwoBytes(int number) {
 
-    public static void main(String[] args) throws MidiUnavailableException, InvalidMidiDataException, InterruptedException {
-        new Fader(0, "Bill", false, 0).run();
-
-
+        byte highByte = (byte) ((number >> 7) & 0x7F); // Extract the high 7 bits
+        byte lowByte = (byte) (number & 0x7F);          // Extract the low 7 bits
+        return new byte[]{highByte, lowByte};
     }
 
 }
