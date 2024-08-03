@@ -2,8 +2,6 @@ package com.example.showSequencerJavafx;
 
 import javafx.beans.property.SimpleBooleanProperty;
 
-import java.util.*;
-
 import javax.sound.midi.*;
 
 public class Fader {
@@ -16,7 +14,7 @@ public class Fader {
     private MidiDevice device;
     private final SimpleBooleanProperty isVisible = new SimpleBooleanProperty();
 
-    public void setDevice(MidiDevice device){
+    public void setDevice(MidiDevice device) {
         this.device = device;
     }
 
@@ -32,18 +30,23 @@ public class Fader {
         this.faderNum = faderNum;
     }
 
-    public String getName(){return name;}
-    public void setName(String name){this.name = name;}
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public int getFaderNum() {
         return faderNum;
     }
 
-    public SimpleBooleanProperty getIsVisible(){
+    public SimpleBooleanProperty getIsVisible() {
         return isVisible;
     }
 
-    public void setIsVisible(boolean b){
+    public void setIsVisible(boolean b) {
         this.isVisible.set(b);
     }
 
@@ -52,7 +55,7 @@ public class Fader {
         return isMix;
     }
 
-    public void setIsMix(boolean isMix){
+    public void setIsMix(boolean isMix) {
         this.isMix = isMix;
     }
 
@@ -61,7 +64,7 @@ public class Fader {
         return device;
     }
 
-    public Fader(int faderNum, String name, boolean isMix, int value, boolean isVisible){
+    public Fader(int faderNum, String name, boolean isMix, int value, boolean isVisible) {
         this.faderNum = faderNum;
         this.name = name;
         this.isMix = isMix;
@@ -70,8 +73,8 @@ public class Fader {
 
     }
 
-    public void run(int dbValue){
-        if(device==null) return;
+    public void run(String dbValue) {
+        if (device == null) return;
 
         try {
 
@@ -85,7 +88,7 @@ public class Fader {
             for (int i = 0; i < len; i += 2) {
                 // using left shift operator on every character
                 ans[i / 2] = (byte) ((Character.digit(message.charAt(i), 16) << 4)
-                        + Character.digit(message.charAt(i+1), 16));
+                        + Character.digit(message.charAt(i + 1), 16));
             }
 
 
@@ -102,13 +105,13 @@ public class Fader {
 
     }
 
-    private String getBytes(int dbValue) {
+    private String getBytes(String dbValue) {
 
-        String typeBytes = "";
+        String typeBytes;
 
-        if(!isMix){
+        if (!isMix) {
             typeBytes = "3E120100330000"; //KInput Fader
-        }else{
+        } else {
             typeBytes = "3E1201004E0000"; //kMixFader Fader
         }
 
@@ -120,11 +123,9 @@ public class Fader {
 
         message = message + typeBytes;
 
-        message = message + intToNBytes(value-1, 2); // Input Num
+        message = message + intToNBytes(value - 1, 2); // Input Num
 
-        //message = message + intToNBytes(dbValue, 5);
-
-        message = message + "000000077F";
+        message = message + dbValue; // dB Gain
 
         message = message + "F7"; // Termination
 
@@ -146,4 +147,8 @@ public class Fader {
 
         return result.toString();
     }
+
+
 }
+
+

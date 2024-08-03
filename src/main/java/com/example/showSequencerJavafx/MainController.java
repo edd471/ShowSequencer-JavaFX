@@ -516,7 +516,7 @@ public class MainController implements Initializable {
         ArrayList<Double> maxVol = new ArrayList<>();
         ArrayList<Double> minVol = new ArrayList<>();
         for (int i = 0; i < 32; i++) {
-            maxVol.add(5.0);
+            maxVol.add(10.0);
             minVol.add(-41.0);
         }
 

@@ -16,20 +16,20 @@ public class FaderManager {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();;
 
     private ObservableList<Fader> faderList = FXCollections.observableArrayList();
-    public final Map<Double, Integer> dbConversionMap = new HashMap<>(){{
-        put((double) -41, 0);
-        put((double) -40, 223);
-        put((double) -30, 323);
-        put((double) -20, 423);
-        put((double) -15, 523);
-        put((double) -10, 623);
-        put((double) -7.5, 673);
-        put((double) -5, 723);
-        put((double) -3, 764);
-        put((double) 0, 823);
-        put((double) 3, 883);
-        put((double) 5, 923);
-        put((double) 10, 1023);
+    public final Map<Double, String> dbConversionMap = new HashMap<>(){{
+        put((double) -41, "0000000000");
+        put((double) -40, "000000015F");
+        put((double) -30, "0000000243");
+        put((double) -20, "0000000327");
+        put((double) -15, "000000040B");
+        put((double) -10, "000000046F");
+        put((double) -7.5, "0000000521");
+        put((double) -5, "0000000553");
+        put((double) -3, "000000057B");
+        put((double) 0, "0000000637");
+        put((double) 3, "0000000673");
+        put((double) 5, "000000071B");
+        put((double) 10, "000000077F");
     }};
 
     public ObservableList<Fader> getFaderList(){return faderList;}
@@ -70,6 +70,7 @@ public class FaderManager {
                 }
 
                 device.close();
+                
             }catch (Exception e){
                 System.out.println(e);
             }
