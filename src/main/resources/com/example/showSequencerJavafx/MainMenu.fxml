@@ -42,6 +42,7 @@
          </Menu>
          <Menu mnemonicParsing="false" text="Run">
             <CheckMenuItem fx:id="checkShowMode" mnemonicParsing="false" onAction="#showMode" text="Show Mode" />
+            <MenuItem mnemonicParsing="false" onAction="#testFaderDesk" text="Test Fader Desk" />
          </Menu>
          <Menu mnemonicParsing="false" text="Cue List">
             <MenuItem mnemonicParsing="false" onAction="#getSFXDirectory" text="Set SFX Directory" />
