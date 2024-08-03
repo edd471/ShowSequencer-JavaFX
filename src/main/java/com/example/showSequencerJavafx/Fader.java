@@ -91,6 +91,8 @@ public class Fader {
 
             msg.setMessage(ans, ans.length);
 
+            System.out.println(message);
+
             device.getReceiver().send(msg, -1);
 
 
@@ -120,7 +122,9 @@ public class Fader {
 
         message = message + intToNBytes(value-1, 2); // Input Num
 
-        message = message + intToNBytes(dbValue, 5);
+        //message = message + intToNBytes(dbValue, 5);
+
+        message = message + "000000077F";
 
         message = message + "F7"; // Termination
 
