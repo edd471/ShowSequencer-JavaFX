@@ -82,6 +82,8 @@ public class Fader {
             byte[] byteArray = convertListToByteArray(message);
             msg.setMessage(byteArray, message.size());
 
+
+
             device.getReceiver().send(msg, -1);
 
 
@@ -117,31 +119,47 @@ public class Fader {
         message.add((byte) 0xF0); // Parameter Change
         message.add((byte) 0x43);
 
-        message.add((byte) 0x01); // Midi Channel
+        message.add((byte) 0x10); // Midi Channel
 
         for (byte typeByte : typeBytes) {
             message.add(typeByte);  //Type
         }
 
-        byte[] inputByte = intToTwoBytes(faderNum);
+        byte[] inputByte = intToNBytes(value, 2);
 
-        message.add(inputByte[1]); // Input Num
+        message.add(inputByte[0]); // Input Num
+        message.add(inputByte[1]);
 
-        byte[] dbByte = intToTwoBytes(dbValue);
+        byte[] dbByte = intToNBytes(dbValue, 5);
 
         message.add(dbByte[0]); // dB Value
         message.add(dbByte[1]);
+        message.add(dbByte[2]);
+        message.add(dbByte[3]);
+        message.add(dbByte[4]);
 
         message.add((byte) 0xF7); // Termination
+
+        for (Byte b : message) {
+            System.out.printf("%02X ", b & 0xFF);
+        }
+        System.out.println();
 
         return message;
     }
 
-    public static byte[] intToTwoBytes(int number) {
+    public static byte[] intToNBytes(int number, int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("Number of bytes must be positive");
+        }
 
-        byte highByte = (byte) ((number >> 7) & 0x7F); // Extract the high 7 bits
-        byte lowByte = (byte) (number & 0x7F);          // Extract the low 7 bits
-        return new byte[]{highByte, lowByte};
+        byte[] bytes = new byte[n];
+        for (int i = 0; i < n; i++) {
+            bytes[n - 1 - i] = (byte) (number & 0x7F); // Extract 7 bits at a time
+            number >>= 7; // Shift right by 7 bits
+        }
+
+        return bytes;
     }
 
 }
