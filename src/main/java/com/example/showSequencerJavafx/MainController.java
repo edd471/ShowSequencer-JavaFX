@@ -31,14 +31,12 @@ import org.w3c.dom.NodeList;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
@@ -58,12 +56,13 @@ public class MainController implements Initializable {
     private final Map<String, ExponentialFade> exponentialFadeMap = new HashMap<>();
     private final ArrayList<Tab> tempTabs = new ArrayList<>();
     private final ArrayList<Cue> displayedCues = new ArrayList<>();
-    private final Node[][] displayedCuesNodes = new Node[7][4];
+    private Node[][] displayedCuesNodes = new Node[7][4];
     private final Map<ReadOnlyObjectProperty<Duration>, ChangeListener<Duration>> displayListeners = new HashMap<>(){};
     private boolean playlistControlPanelDisabled = true;
+    private final FaderManager faderManager = new FaderManager();
     private final PlaylistManager playlistManager = new PlaylistManager(this);
     private final CuesManager cuesManager = new CuesManager(this);
-    private final FaderManager faderManager = new FaderManager();
+
 
     public enum COMMAND{ NONE, PLAY, STOP, VOLUME, STOP_ALL, PLAYLIST_START, PLAYLIST_CONT, PLAYLIST_FADE }
 
@@ -89,6 +88,40 @@ public class MainController implements Initializable {
     private Button buttonCueDisplayFade1, buttonCueDisplayFade2, buttonCueDisplayFade3, buttonCueDisplayFade4, buttonCueDisplayVolUp1, buttonCueDisplayVolUp2, buttonCueDisplayVolUp3, buttonCueDisplayVolUp4, buttonCueDisplayVolDn1, buttonCueDisplayVolDn2, buttonCueDisplayVolDn3, buttonCueDisplayVolDn4;
     @FXML
     private Label lblRunScreenCurrentTime1, lblRunScreenCurrentTime2, lblRunScreenCurrentTime3, lblRunScreenCurrentTime4, lblRunScreenTotalTime1, lblRunScreenTotalTime2, lblRunScreenTotalTime3, lblRunScreenTotalTime4;
+
+    @FXML
+    private Label lblCurrentCue1, lblCurrentCue2, lblCurrentCue3, lblCurrentCue4, lblCurrentCue5, lblCurrentCue6, lblCurrentCue7, lblCurrentCue8, lblCurrentCue9, lblCurrentCue10,
+            lblCurrentCue11, lblCurrentCue12, lblCurrentCue13, lblCurrentCue14, lblCurrentCue15, lblCurrentCue16, lblCurrentCue17, lblCurrentCue18, lblCurrentCue19, lblCurrentCue20,
+            lblCurrentCue21, lblCurrentCue22, lblCurrentCue23, lblCurrentCue24, lblCurrentCue25, lblCurrentCue26, lblCurrentCue27, lblCurrentCue28, lblCurrentCue29, lblCurrentCue30,
+            lblCurrentCue31, lblCurrentCue32;
+
+    private ArrayList<Label> currentCueLabels;
+
+    @FXML
+    private Label lblNextCue1, lblNextCue2, lblNextCue3, lblNextCue4, lblNextCue5, lblNextCue6, lblNextCue7, lblNextCue8, lblNextCue9, lblNextCue10,
+            lblNextCue11, lblNextCue12, lblNextCue13, lblNextCue14, lblNextCue15, lblNextCue16, lblNextCue17, lblNextCue18, lblNextCue19, lblNextCue20,
+            lblNextCue21, lblNextCue22, lblNextCue23, lblNextCue24, lblNextCue25, lblNextCue26, lblNextCue27, lblNextCue28, lblNextCue29, lblNextCue30,
+            lblNextCue31, lblNextCue32;
+
+    private ArrayList<Label> nextCueLabels;
+
+
+    @FXML
+    private Label txtCurrentFaderVal1, txtCurrentFaderVal2, txtCurrentFaderVal3, txtCurrentFaderVal4, txtCurrentFaderVal5, txtCurrentFaderVal6, txtCurrentFaderVal7, txtCurrentFaderVal8, txtCurrentFaderVal9, txtCurrentFaderVal10,
+            txtCurrentFaderVal11, txtCurrentFaderVal12, txtCurrentFaderVal13, txtCurrentFaderVal14, txtCurrentFaderVal15, txtCurrentFaderVal16, txtCurrentFaderVal17, txtCurrentFaderVal18, txtCurrentFaderVal19, txtCurrentFaderVal20,
+            txtCurrentFaderVal21, txtCurrentFaderVal22, txtCurrentFaderVal23, txtCurrentFaderVal24, txtCurrentFaderVal25, txtCurrentFaderVal26, txtCurrentFaderVal27, txtCurrentFaderVal28, txtCurrentFaderVal29, txtCurrentFaderVal30,
+            txtCurrentFaderVal31, txtCurrentFaderVal32;
+
+    private ArrayList<Label> currentFaderValueLabels;
+
+    @FXML
+    private Label txtNextFaderVal1, txtNextFaderVal2, txtNextFaderVal3, txtNextFaderVal4, txtNextFaderVal5, txtNextFaderVal6, txtNextFaderVal7, txtNextFaderVal8, txtNextFaderVal9, txtNextFaderVal10,
+            txtNextFaderVal11, txtNextFaderVal12, txtNextFaderVal13, txtNextFaderVal14, txtNextFaderVal15, txtNextFaderVal16, txtNextFaderVal17, txtNextFaderVal18, txtNextFaderVal19, txtNextFaderVal20,
+            txtNextFaderVal21, txtNextFaderVal22, txtNextFaderVal23, txtNextFaderVal24, txtNextFaderVal25, txtNextFaderVal26, txtNextFaderVal27, txtNextFaderVal28, txtNextFaderVal29, txtNextFaderVal30,
+            txtNextFaderVal31, txtNextFaderVal32;
+
+    private ArrayList<Label> nextFaderValueLabels;
+
 
     @FXML
     private TabPane tabPane;
@@ -126,6 +159,15 @@ public class MainController implements Initializable {
 
     private ArrayList<TableColumn<Cue, Double>> faderColumns;
 
+    @FXML
+    private TableColumn<Cue, String> fader1Name, fader2Name, fader3Name, fader4Name, fader5Name, fader6Name, fader7Name, fader8Name,
+            fader9Name, fader10Name, fader11Name, fader12Name, fader13Name, fader14Name, fader15Name, fader16Name, fader17Name, fader18Name,
+            fader19Name, fader20Name, fader21Name, fader22Name, fader23Name, fader24Name, fader25Name, fader26Name, fader27Name, fader28Name,
+            fader29Name, fader30Name, fader31Name, fader32Name;
+
+
+
+    private ArrayList<TableColumn<Cue, String>> faderNameColumns;
 
     @FXML
     private TableView<Cue> cueListTableFaders;
@@ -192,14 +234,38 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        refreshTables();
-        refreshRunScreen();
-
         faderColumns = new ArrayList<>(Arrays.asList(fader1, fader2, fader3, fader4, fader5, fader6, fader7, fader8,
                 fader9, fader10, fader11, fader12, fader13, fader14, fader15, fader16, fader17, fader18,
                 fader19, fader20, fader21, fader22, fader23, fader24, fader25, fader26, fader27, fader28,
                 fader29, fader30, fader31, fader32));
 
+        faderNameColumns = new ArrayList<>(Arrays.asList(fader1Name, fader2Name, fader3Name, fader4Name, fader5Name, fader6Name, fader7Name, fader8Name,
+                fader9Name, fader10Name, fader11Name, fader12Name, fader13Name, fader14Name, fader15Name, fader16Name, fader17Name, fader18Name,
+                fader19Name, fader20Name, fader21Name, fader22Name, fader23Name, fader24Name, fader25Name, fader26Name, fader27Name, fader28Name,
+                fader29Name, fader30Name, fader31Name, fader32Name));
+
+        currentCueLabels = new ArrayList<>(Arrays.asList(lblCurrentCue1, lblCurrentCue2, lblCurrentCue3, lblCurrentCue4, lblCurrentCue5, lblCurrentCue6, lblCurrentCue7, lblCurrentCue8, lblCurrentCue9, lblCurrentCue10,
+                lblCurrentCue11, lblCurrentCue12, lblCurrentCue13, lblCurrentCue14, lblCurrentCue15, lblCurrentCue16, lblCurrentCue17, lblCurrentCue18, lblCurrentCue19, lblCurrentCue20,
+                lblCurrentCue21, lblCurrentCue22, lblCurrentCue23, lblCurrentCue24, lblCurrentCue25, lblCurrentCue26, lblCurrentCue27, lblCurrentCue28, lblCurrentCue29, lblCurrentCue30,
+                lblCurrentCue31, lblCurrentCue32));
+
+        nextCueLabels = new ArrayList<>(Arrays.asList(lblNextCue1, lblNextCue2, lblNextCue3, lblNextCue4, lblNextCue5, lblNextCue6, lblNextCue7, lblNextCue8, lblNextCue9, lblNextCue10,
+                lblNextCue11, lblNextCue12, lblNextCue13, lblNextCue14, lblNextCue15, lblNextCue16, lblNextCue17, lblNextCue18, lblNextCue19, lblNextCue20,
+                lblNextCue21, lblNextCue22, lblNextCue23, lblNextCue24, lblNextCue25, lblNextCue26, lblNextCue27, lblNextCue28, lblNextCue29, lblNextCue30,
+                lblNextCue31, lblNextCue32));
+
+        currentFaderValueLabels = new ArrayList<>(Arrays.asList(txtCurrentFaderVal1, txtCurrentFaderVal2, txtCurrentFaderVal3, txtCurrentFaderVal4, txtCurrentFaderVal5, txtCurrentFaderVal6, txtCurrentFaderVal7, txtCurrentFaderVal8, txtCurrentFaderVal9, txtCurrentFaderVal10,
+                txtCurrentFaderVal11, txtCurrentFaderVal12, txtCurrentFaderVal13, txtCurrentFaderVal14, txtCurrentFaderVal15, txtCurrentFaderVal16, txtCurrentFaderVal17, txtCurrentFaderVal18, txtCurrentFaderVal19, txtCurrentFaderVal20,
+                txtCurrentFaderVal21, txtCurrentFaderVal22, txtCurrentFaderVal23, txtCurrentFaderVal24, txtCurrentFaderVal25, txtCurrentFaderVal26, txtCurrentFaderVal27, txtCurrentFaderVal28, txtCurrentFaderVal29, txtCurrentFaderVal30,
+                txtCurrentFaderVal31, txtCurrentFaderVal32));
+
+        nextFaderValueLabels = new ArrayList<>(Arrays.asList(txtNextFaderVal1, txtNextFaderVal2, txtNextFaderVal3, txtNextFaderVal4, txtNextFaderVal5, txtNextFaderVal6, txtNextFaderVal7, txtNextFaderVal8, txtNextFaderVal9, txtNextFaderVal10,
+                txtNextFaderVal11, txtNextFaderVal12, txtNextFaderVal13, txtNextFaderVal14, txtNextFaderVal15, txtNextFaderVal16, txtNextFaderVal17, txtNextFaderVal18, txtNextFaderVal19, txtNextFaderVal20,
+                txtNextFaderVal21, txtNextFaderVal22, txtNextFaderVal23, txtNextFaderVal24, txtNextFaderVal25, txtNextFaderVal26, txtNextFaderVal27, txtNextFaderVal28, txtNextFaderVal29, txtNextFaderVal30,
+                txtNextFaderVal31, txtNextFaderVal32));
+
+        refreshTables();
+        refreshRunScreen();
 
         for(COMMAND command : COMMAND.values()){
             commandColorMap.put(command, Color.WHITE);
@@ -240,40 +306,15 @@ public class MainController implements Initializable {
         menuItemPreferences.setDisable(true);
 
 
-        displayedCuesNodes[0][0] = textDisplayCueTrack1;
-        displayedCuesNodes[0][1] = textDisplayCueTrack2;
-        displayedCuesNodes[0][2] = textDisplayCueTrack3;
-        displayedCuesNodes[0][3] = textDisplayCueTrack4;
-
-        displayedCuesNodes[1][0] = textDisplayCueVol1;
-        displayedCuesNodes[1][1] = textDisplayCueVol2;
-        displayedCuesNodes[1][2] = textDisplayCueVol3;
-        displayedCuesNodes[1][3] = textDisplayCueVol4;
-
-        displayedCuesNodes[2][0] = buttonCueDisplayVolUp1;
-        displayedCuesNodes[2][1] = buttonCueDisplayVolUp2;
-        displayedCuesNodes[2][2] = buttonCueDisplayVolUp3;
-        displayedCuesNodes[2][3] = buttonCueDisplayVolUp4;
-
-        displayedCuesNodes[3][0] = buttonCueDisplayVolDn1;
-        displayedCuesNodes[3][1] = buttonCueDisplayVolDn2;
-        displayedCuesNodes[3][2] = buttonCueDisplayVolDn3;
-        displayedCuesNodes[3][3] = buttonCueDisplayVolDn4;
-
-        displayedCuesNodes[4][0] = buttonCueDisplayFade1;
-        displayedCuesNodes[4][1] = buttonCueDisplayFade2;
-        displayedCuesNodes[4][2] = buttonCueDisplayFade3;
-        displayedCuesNodes[4][3] = buttonCueDisplayFade4;
-
-        displayedCuesNodes[5][0] = lblRunScreenCurrentTime1;
-        displayedCuesNodes[5][1] = lblRunScreenCurrentTime2;
-        displayedCuesNodes[5][2] = lblRunScreenCurrentTime3;
-        displayedCuesNodes[5][3] = lblRunScreenCurrentTime4;
-
-        displayedCuesNodes[6][0] = lblRunScreenTotalTime1;
-        displayedCuesNodes[6][1] = lblRunScreenTotalTime2;
-        displayedCuesNodes[6][2] = lblRunScreenTotalTime3;
-        displayedCuesNodes[6][3] = lblRunScreenTotalTime4;
+        displayedCuesNodes = new Node[][] {
+                { textDisplayCueTrack1, textDisplayCueTrack2, textDisplayCueTrack3, textDisplayCueTrack4 },
+                { textDisplayCueVol1, textDisplayCueVol2, textDisplayCueVol3, textDisplayCueVol4 },
+                { buttonCueDisplayVolUp1, buttonCueDisplayVolUp2, buttonCueDisplayVolUp3, buttonCueDisplayVolUp4 },
+                { buttonCueDisplayVolDn1, buttonCueDisplayVolDn2, buttonCueDisplayVolDn3, buttonCueDisplayVolDn4 },
+                { buttonCueDisplayFade1, buttonCueDisplayFade2, buttonCueDisplayFade3, buttonCueDisplayFade4 },
+                { lblRunScreenCurrentTime1, lblRunScreenCurrentTime2, lblRunScreenCurrentTime3, lblRunScreenCurrentTime4 },
+                { lblRunScreenTotalTime1, lblRunScreenTotalTime2, lblRunScreenTotalTime3, lblRunScreenTotalTime4 }
+        };
 
 
         runScreenCueVolumeSlider.valueProperty().bindBidirectional(cueListVolumeSlider.valueProperty());
@@ -413,23 +454,24 @@ public class MainController implements Initializable {
             cue.setCueTime(event.getNewValue());
         });
 
-        ObservableList<Double> doubleList = FXCollections.observableArrayList(Arrays.asList((double) -41, (double) -40, (double) -30, (double) -20, (double) -15, (double) -10,
-                (double) -7.5, (double) -5, (double) -3, (double) 0, (double) 3,
+        ObservableList<Double> doubleList = FXCollections.observableArrayList(Arrays.asList(null, (double) -41, (double) -40, (double) -30, (double) -20, (double) -15, (double) -10,
+                -7.5, (double) -5, (double) -3, (double) 0, (double) 3,
                 (double) 0, (double) 3, (double) 5, (double) 10));
-
 
         for(TableColumn<Cue, Double> col : faderColumns){
             col.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getFaderValues().get(faderColumns.indexOf(col))));
-            col.setCellFactory(x-> new ComboBoxTableCell<Cue, Double>(new StringConverter<Double>() {
+            col.setCellFactory(x-> new ComboBoxTableCell<>(new StringConverter<>() {
                 @Override
                 public String toString(Double aDouble) {
-                    if(aDouble<-40) return "-∞";
+                    if(aDouble==null) return "---";
+                    else if(aDouble<-40) return "-∞";
                     else return aDouble.toString();
                 }
 
                 @Override
                 public Double fromString(String s) {
-                    if(s.equals("-∞")) return (double) -41;
+                    if(s.equals("---")) return null;
+                    else if(s.equals("-∞")) return (double) -41;
                     else return Double.parseDouble(s);
                 }
             }, doubleList));
@@ -537,6 +579,16 @@ public class MainController implements Initializable {
         PLAYLIST_FADE_TIME = preferences.playlistFadeTime;
 
         faderManager.setDevice(preferences.device);
+        for(int i=0; i < faderNameColumns.size(); i++){
+            if(faderManager.getFaderList().get(i).getName().isEmpty()){
+                faderNameColumns.get(i).setText("...");
+            }else{
+                faderNameColumns.get(i).setText(faderManager.getFaderList().get(i).getName());
+            }
+            faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
+        }
+
+        faderManager.setFaderList(new ArrayList<>(preferences.tempFaderList));
 
         commandColorMap.put(COMMAND.NONE, preferences.colorNone);
         commandColorMap.put(COMMAND.PLAY, preferences.colorPLAY);
@@ -681,10 +733,29 @@ public class MainController implements Initializable {
             }
             faderManager.setFaderList(addList);
 
+            boolean found = false;
             for(MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()){
-                if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent())){
+                if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent()) && MidiSystem.getMidiDevice(info).getMaxTransmitters() == 0){
                     faderManager.setDevice(MidiSystem.getMidiDevice(info));
+                    found = true;
                 }
+            }
+
+            if(!found && !document.getElementsByTagName("MidiDevice").item(0).getTextContent().equals("null")){
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setHeaderText("Midi Device Not Found");
+                alert.showAndWait();
+
+                faderManager.setDevice(null);
+            }
+
+            for(int i=0; i < faderNameColumns.size(); i++){
+                if(faderManager.getFaderList().get(i).getName().isEmpty()){
+                    faderNameColumns.get(i).setText("...");
+                }else{
+                    faderNameColumns.get(i).setText(faderManager.getFaderList().get(i).getName());
+                }
+                faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
             }
 
 
@@ -847,7 +918,11 @@ public class MainController implements Initializable {
                 NodeList faderNodeList = cueChildren.item(7).getChildNodes();
                 for (int j = 0; j < faderNodeList.getLength(); j++) {
                     org.w3c.dom.Node faderNode = faderNodeList.item(j);
-                    cuesManager.getCues().get(i).getFaderValues().set(j, Double.parseDouble(faderNode.getTextContent()));
+                    if(faderNode.getTextContent().equals("...")){
+                        cuesManager.getCues().get(i).getFaderValues().set(j, null);
+                    }else{
+                        cuesManager.getCues().get(i).getFaderValues().set(j, Double.parseDouble(faderNode.getTextContent()));
+                    }
 
                 }
             }
@@ -944,9 +1019,14 @@ public class MainController implements Initializable {
                 Element faders = document.createElement("faders");
 
                 int i = 1;
-                for(double value : cue.getFaderValues()){
+                for(var value : cue.getFaderValues()){
                     Element faderNum = document.createElement("Fader" + i);
-                    faderNum.appendChild(document.createTextNode(String.valueOf(value)));
+                    if(value==null){
+                        faderNum.appendChild(document.createTextNode("..."));
+                    }else{
+                        faderNum.appendChild(document.createTextNode(String.valueOf(value)));
+                    }
+
                     faders.appendChild(faderNum);
                     i++;
                 }
@@ -1132,6 +1212,20 @@ public class MainController implements Initializable {
     @FXML
     protected void refreshRunScreen() {
 
+        if(cueListTableAudio==null) return;
+
+        for (int i = 0; i < 32; i++) {
+            if (!faderManager.getFaderList().get(i).getName().equals("...")) {
+                currentCueLabels.get(i).setText(faderManager.getFaderList().get(i).getName());
+                nextCueLabels.get(i).setText(faderManager.getFaderList().get(i).getName());
+            } else {
+                currentCueLabels.get(i).setText("");
+                nextCueLabels.get(i).setText("");
+            }
+        }
+
+
+
         setPlaylistControlPanelDisabled(playlistControlPanelDisabled);
 
         comboBoxCueJump.setItems(null);
@@ -1211,11 +1305,27 @@ public class MainController implements Initializable {
                 currentCueProgress.progressProperty().bind(currentCue.getProgress());
             }
 
+            ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum());
+            for(int i=0; i < currentFaderValueLabels.size(); i++){
+                currentFaderValueLabels.get(i).setStyle("");
+                if(dBValues.get(i)==null){
+                    currentFaderValueLabels.get(i).setText("");
+                }else if (dBValues.get(i)==-41.0){
+                    currentFaderValueLabels.get(i).setText("-∞");
+                }else{
+                    currentFaderValueLabels.get(i).setText(dBValues.get(i).toString());
+                }
+                if(dBValues.get(i)!=null && currentCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(currentCue.getFaderValues().get(i))){
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 14px");
+                }
+            }
 
         }else{
             textCurrentCueNum.setText("-1");
             textCurrentCueName.setText("PreShow");
             textCurrentCueTime.setText("");
+
+            currentFaderValueLabels.forEach(lbl->{lbl.setStyle(""); lbl.setText("");});
         }
 
         if (cuesManager.getCurrentCueNum() < cuesManager.getCues().size() - 1) {
@@ -1255,6 +1365,22 @@ public class MainController implements Initializable {
             }else{
                 textNextCueTime.setText("N/A");
             }
+
+            ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum() + 1);
+            for(int i=0; i < nextFaderValueLabels.size(); i++){
+                nextFaderValueLabels.get(i).setStyle("");
+                if(dBValues.get(i)==null){
+                    nextFaderValueLabels.get(i).setText("");
+                }else if (dBValues.get(i)==-41.0){
+                    nextFaderValueLabels.get(i).setText("-∞");
+                }else{
+                    nextFaderValueLabels.get(i).setText(dBValues.get(i).toString());
+                }
+                if(dBValues.get(i)!=null && nextCue.getFaderValues().get(i)!=null &&dBValues.get(i).equals(nextCue.getFaderValues().get(i))){
+                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 14px");
+                }
+            }
+
         }else{
             textNextCueNum.setText("");
             textNextCueName.setText("");
@@ -1264,6 +1390,7 @@ public class MainController implements Initializable {
             textNextCueVol.setText("");
             textNextCueTime.setText("");
 
+            nextFaderValueLabels.forEach(lbl->{lbl.setStyle(""); lbl.setText("");});
         }
     }
 

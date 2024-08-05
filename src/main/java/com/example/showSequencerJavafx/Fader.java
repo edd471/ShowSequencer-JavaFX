@@ -1,13 +1,14 @@
 package com.example.showSequencerJavafx;
 
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.scene.control.Alert;
 
 import javax.sound.midi.*;
 
 public class Fader {
 
 
-    private int faderNum;
+    private final int faderNum;
     private String name;
     private boolean isMix;
     private int value;
@@ -24,10 +25,6 @@ public class Fader {
 
     public void setValue(int value) {
         this.value = value;
-    }
-
-    public void setFaderNum(int faderNum) {
-        this.faderNum = faderNum;
     }
 
     public String getName() {
@@ -60,17 +57,21 @@ public class Fader {
     }
 
 
-    public MidiDevice getDevice() {
-        return device;
-    }
-
     public Fader(int faderNum, String name, boolean isMix, int value, boolean isVisible) {
         this.faderNum = faderNum;
         this.name = name;
         this.isMix = isMix;
         this.value = value;
         this.isVisible.set(isVisible);
+    }
 
+    public Fader(Fader fader){
+        this.faderNum = fader.faderNum;
+        this.name = fader.name;
+        this.isMix = fader.isMix;
+        this.isVisible.set(fader.getIsVisible().get());
+        this.value = fader.value;
+        this.device = fader.device;
     }
 
     public void run(String dbValue) {
@@ -91,16 +92,16 @@ public class Fader {
                         + Character.digit(message.charAt(i + 1), 16));
             }
 
-
             msg.setMessage(ans, ans.length);
-
-            System.out.println(message);
 
             device.getReceiver().send(msg, -1);
 
 
         } catch (Exception e) {
-            System.out.println(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Error Sending Midi Command");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
         }
 
     }

@@ -27,6 +27,7 @@ public class PreferencesController implements Initializable {
     public MidiDevice device;
     public double minFadeTime, runScreenFadeTime, playlistFadeTime;
     public Color colorNone, colorPLAY, colorSTOP, colorVOLUME, colorSTOP_ALL, colorPLAYLIST_START, colorPLAYLIST_CONT, colorPLAYLIST_FADE;
+    public ObservableList<Fader> tempFaderList = FXCollections.observableArrayList();
 
     @FXML
     private TextField txtMinFadeTime, txtRunScreenFadeTime, txtPlaylistFadeTime;
@@ -54,6 +55,10 @@ public class PreferencesController implements Initializable {
         mainController = PreferencesScreen.getMainController();
         faderManager = mainController.getFaderManager();
 
+        tempFaderList = FXCollections.observableArrayList();
+        tempFaderList.addAll(faderManager.getFaderList().stream().map(Fader::new).toList());
+
+        faderConfigTable.setItems(tempFaderList);
 
         colFaderNum.setCellValueFactory(new PropertyValueFactory<>("faderNum"));
 
@@ -120,7 +125,7 @@ public class PreferencesController implements Initializable {
             }
         }).toList();
 
-        devices = FXCollections.observableList(Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(toRemove::contains).toList()); //.filter(toRemove::contains).toList());
+        devices = FXCollections.observableList(Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(toRemove::contains).toList());
         comboBoxMidiDevice.setItems(devices);
 
         if(faderManager.getDevice()!=null){
@@ -157,10 +162,8 @@ public class PreferencesController implements Initializable {
     @FXML
     protected void midiDeviceChosen(){
         try {
-            faderManager.setFaderList(MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem()));
+            faderManager.setDevice(MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem()));
             device = MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem());
-
-            faderConfigTable.setItems(faderManager.getFaderList());
             faderConfigTable.refresh();
 
         } catch (Exception e){
@@ -174,8 +177,7 @@ public class PreferencesController implements Initializable {
 
     @FXML
     protected void close(){
-        System.out.println(faderManager.getFaderList());
-        //PreferencesScreen.getStage().close();
+        PreferencesScreen.getStage().close();
     }
 
     @FXML

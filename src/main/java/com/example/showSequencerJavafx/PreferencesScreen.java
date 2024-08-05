@@ -3,6 +3,7 @@ package com.example.showSequencerJavafx;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -38,7 +39,10 @@ public class PreferencesScreen extends Application {
         try{
             start(new Stage());
         }catch (Exception e){
-            System.out.println(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setHeaderText("Error Opening Preferences");
+            alert.setContentText(e.getLocalizedMessage());
+            alert.showAndWait();
         }
 
     }

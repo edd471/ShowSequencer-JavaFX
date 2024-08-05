@@ -23,12 +23,14 @@ public class CuesManager {
     private double initialCueVolume;
     private final MainController mainController;
     private final PlaylistManager playlistManager;
+    private final FaderManager faderManager;
 
 
 
     public CuesManager(MainController mainController){
         this.mainController = mainController;
         this.playlistManager = mainController.getPlaylistManager();
+        this.faderManager = mainController.getFaderManager();
 
         this.currentCueNum = -1;
         this.cues.clear();
@@ -137,6 +139,7 @@ public class CuesManager {
             if(currentCueNum>=0) {
                 cues.get(currentCueNum).setSelected(true);
                 cues.get(currentCueNum).run();
+                faderManager.runFaders(cues.get(currentCueNum).getFaderValues());
             }
 
         }
@@ -150,11 +153,33 @@ public class CuesManager {
 
             cues.get(currentCueNum).setSelected(true);
             cues.get(currentCueNum).replay();
-
+            faderManager.runFaders(getBacktrackFaderDb(currentCueNum));
 
         }else{
             mainController.cueListReset();
         }
+    }
+
+    public ArrayList<Double> getBacktrackFaderDb (int currentCueNum){
+        ArrayList<Double> result = new ArrayList<>();
+
+        for (int i = 0; i < cues.get(currentCueNum).getFaderValues().size(); i++) {
+            Double addVar = null;
+            if(cues.get(currentCueNum).getFaderValues().get(i)!=null){
+                addVar = cues.get(currentCueNum).getFaderValues().get(i);
+            }else{
+                for (int j = currentCueNum-1; j >=0 ; j--) {
+                    if(cues.get(j).getFaderValues().get(i)!=null) {
+                        addVar = cues.get(j).getFaderValues().get(i);
+                        break;
+                    }
+                }
+            }
+
+            result.add(addVar);
+        }
+
+        return result;
     }
 
     public void jumpTo(int selectedIndex) {
@@ -182,10 +207,14 @@ public class CuesManager {
 
             Cue nextCue = getCues().get(currentCueNum);
 
+            faderManager.runFaders(getBacktrackFaderDb(currentCueNum));
+
             Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(); nextCue.setSelected(true);}));
             playDelay.play();
         }));
         delay.play();
+
+
     }
 
 
@@ -198,6 +227,12 @@ public class CuesManager {
             cue.stop();
         }
         playlistManager.stop(mainController.MIN_FADE_TIME);
+
+        ArrayList<Double> minDb = new ArrayList<>();
+        for (int i = 0; i < 32; i++) {
+            minDb.add((double) -41);
+        }
+        faderManager.runFaders(minDb);
 
         ExponentialFade volFade = mainController.getFades().remove("||CUELIST||");
         if(volFade!=null) volFade.remove();

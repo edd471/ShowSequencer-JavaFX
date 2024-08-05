@@ -42,8 +42,7 @@ public class TableViewClean<T> extends TableView<T> {
         if (! cleaned) {
             if (cleanSide == CleanSide.VERTICAL || cleanSide == CleanSide.BOTH) {
                 for (Node n: lookupAll(".scroll-bar:vertical")) {
-                    if (n instanceof ScrollBar) {
-                        ScrollBar scrollBar = (ScrollBar) n;
+                    if (n instanceof ScrollBar scrollBar) {
                         scrollBar.setPrefWidth(0);
                         scrollBar.setMaxWidth(0);
                         scrollBar.setVisible(false);
@@ -53,8 +52,7 @@ public class TableViewClean<T> extends TableView<T> {
             }
             if (cleanSide == CleanSide.HORIZONTAL || cleanSide == CleanSide.BOTH) {
                 for (Node n: lookupAll(".scroll-bar:horizontal")) {
-                    if (n instanceof ScrollBar) {
-                        ScrollBar scrollBar = (ScrollBar) n;
+                    if (n instanceof ScrollBar scrollBar) {
                         scrollBar.setPrefHeight(0);
                         scrollBar.setMaxHeight(0);
                         scrollBar.setVisible(false);
