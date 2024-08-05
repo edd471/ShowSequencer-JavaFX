@@ -80,7 +80,7 @@ public class MainController implements Initializable {
     private VBox playlistControlPanel;
 
     @FXML
-    private MenuItem menuItemSaveShow, menuItemPreferences;
+    private MenuItem menuItemSaveShow;
 
     @FXML
     private TextField textDisplayCueTrack1, textDisplayCueTrack2, textDisplayCueTrack3, textDisplayCueTrack4, textDisplayCueVol1, textDisplayCueVol2, textDisplayCueVol3, textDisplayCueVol4;
@@ -303,7 +303,6 @@ public class MainController implements Initializable {
 
 
         menuItemSaveShow.setDisable(true);
-        menuItemPreferences.setDisable(true);
 
 
         displayedCuesNodes = new Node[][] {
@@ -604,6 +603,9 @@ public class MainController implements Initializable {
     }
 
     public void savePreferences(){
+        if(projectFile==null){
+            saveAsShow();
+        }
 
         try{
             // Create a DocumentBuilder
@@ -937,7 +939,6 @@ public class MainController implements Initializable {
             preferences.put("ProjectFile", selectedFile.getAbsolutePath());
             projectFile = selectedFile;
             menuItemSaveShow.setDisable(false);
-            menuItemPreferences.setDisable(false);
 
             loadPreferences();
 
@@ -1065,7 +1066,6 @@ public class MainController implements Initializable {
 
             preferences.put("ProjectFile", saveDestination.getAbsolutePath());
             menuItemSaveShow.setDisable(false);
-            menuItemPreferences.setDisable(false);
             projectFile = saveDestination;
             ShowSequencer.getStage().setTitle(saveDestination.getName());
 
