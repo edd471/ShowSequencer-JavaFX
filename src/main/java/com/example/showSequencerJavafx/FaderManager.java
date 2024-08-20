@@ -8,6 +8,7 @@ import javax.sound.midi.MidiDevice;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,15 +64,16 @@ public class FaderManager {
         Runnable sysExTask = () -> {
 
             try{
-                device.open();
+                if(!dBs.stream().allMatch(Objects::isNull)){
+                    device.open();
+                    for (int i = 0; i < 32; i++) {
+                        if(dBs.get(i)==null) continue;
+                        faderList.get(i).run(dbConversionMap.get(dBs.get(i)));
+                    }
 
-                for (int i = 0; i < 32; i++) {
-                    if(dBs.get(i)==null) continue;
-                    faderList.get(i).run(dbConversionMap.get(dBs.get(i)));
+                    device.close();
                 }
 
-                device.close();
-                
             }catch (Exception e){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setHeaderText("Error Sending Midi Command");

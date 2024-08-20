@@ -262,7 +262,7 @@ public class Cue implements States{
                     progress.bind(playlistManager.progress);
                     mainController.setPlaylistControlPanelDisabled(false);
                     playlistManager.setVolume(cueVol.get());
-                    playlistManager.start(cueTime);
+                    playlistManager.nextTrack(cueTime);
                 }
                 break;
             }

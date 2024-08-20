@@ -28,16 +28,21 @@ import javafx.util.converter.DoubleStringConverter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -196,6 +201,9 @@ public class MainController implements Initializable {
     private final MenuItem cuePaste = new MenuItem("Paste Into");
     private final MenuItem cuePasteAsNew = new MenuItem("Paste As New");
     private final MenuItem cueDelete = new MenuItem("Delete");
+
+    private final MenuItem faderCopy = new MenuItem("Copy");
+    private final MenuItem faderPaste = new MenuItem("Paste");
 
     public TableView<Cue> getCueAudioTable() {
         return cueListTableAudio;
@@ -500,7 +508,8 @@ public class MainController implements Initializable {
             if(!newValue){
                 checkShowMode.setSelected(false);
                 showMode();
-            }});
+            }
+        });
 
 
 
@@ -511,12 +520,19 @@ public class MainController implements Initializable {
         cuePasteAsNew.setOnAction(event -> cueListPasteCueAsNew());
         cuePaste.setDisable(true);
         cuePasteAsNew.setDisable(true);
+        faderPaste.setDisable(true);
 
         ContextMenu cueMenu = new ContextMenu(cueInsert, cueCopy, cuePaste, cuePasteAsNew, cueDelete);
 
+        faderCopy.setOnAction(event -> cueListCopyFader());
+        faderPaste.setOnAction(event -> cueListPasteFader());
+
+        ContextMenu faderMenu = new ContextMenu(faderCopy, faderPaste);
+
         cueListTableAudio.setContextMenu(cueMenu);
-        cueListTableFaders.setContextMenu(cueMenu);
+        cueListTableFaders.setContextMenu(faderMenu);
         cueListTableAudio.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        cueListTableFaders.getSelectionModel().setCellSelectionEnabled(true);
         cueListTableFaders.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         Button cueListPlaceHolder = new Button("Add Cue");
         cueListPlaceHolder.setOnAction(e-> cueListAddCue());
@@ -530,6 +546,9 @@ public class MainController implements Initializable {
         }
 
     }
+
+
+
 
     private String colorToString(Color color) {
         return String.format("#%02X%02X%02X%02X",
@@ -577,6 +596,8 @@ public class MainController implements Initializable {
         RUNSCREEN_FADE_TIME = preferences.runScreenFadeTime;
         PLAYLIST_FADE_TIME = preferences.playlistFadeTime;
 
+        faderManager.setFaderList(new ArrayList<>(preferences.tempFaderList));
+
         faderManager.setDevice(preferences.device);
         for(int i=0; i < faderNameColumns.size(); i++){
             if(faderManager.getFaderList().get(i).getName().isEmpty()){
@@ -586,8 +607,6 @@ public class MainController implements Initializable {
             }
             faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
         }
-
-        faderManager.setFaderList(new ArrayList<>(preferences.tempFaderList));
 
         commandColorMap.put(COMMAND.NONE, preferences.colorNone);
         commandColorMap.put(COMMAND.PLAY, preferences.colorPLAY);
@@ -680,6 +699,9 @@ public class MainController implements Initializable {
             // Write to XML file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(document);
 
             if(!projectFile.exists()) {
@@ -687,7 +709,7 @@ public class MainController implements Initializable {
             }
 
             // Specify your local file path
-            StreamResult result = new StreamResult(projectFile + "/preferences");
+            StreamResult result = new StreamResult(projectFile + "/preferences.xml");
             transformer.transform(source, result);
 
             refreshRunScreen();
@@ -700,75 +722,70 @@ public class MainController implements Initializable {
         }
     }
 
-    private void loadPreferences(){
-        try{
-            // Create a DocumentBuilder
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
+    private void loadPreferences() throws ParserConfigurationException, IOException, SAXException, MidiUnavailableException {
 
-            // Parse the XML file
-            Document document = builder.parse(projectFile+"/preferences");
+        // Create a DocumentBuilder
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
 
-            org.w3c.dom.Node minFadeNode = document.getElementsByTagName("MIN_FADE_TIME").item(0);
-            MIN_FADE_TIME = Double.parseDouble(minFadeNode.getTextContent());
+        // Parse the XML file
+        Document document = builder.parse(projectFile+"/preferences.xml");
 
-            org.w3c.dom.Node runScreenFadeNode = document.getElementsByTagName("RUNSCREEN_FADE_TIME").item(0);
-            RUNSCREEN_FADE_TIME = Double.parseDouble(runScreenFadeNode.getTextContent());
+        document.getDocumentElement().normalize();
 
-            org.w3c.dom.Node playlistFadeNode = document.getElementsByTagName("PLAYLIST_FADE_TIME").item(0);
-            PLAYLIST_FADE_TIME = Double.parseDouble(playlistFadeNode.getTextContent());
+        org.w3c.dom.Node minFadeNode = document.getElementsByTagName("MIN_FADE_TIME").item(0);
+        MIN_FADE_TIME = Double.parseDouble(minFadeNode.getTextContent());
 
-            NodeList nodeList = document.getElementsByTagName("COMMAND_COLOURS").item(0).getChildNodes();
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                org.w3c.dom.Node command = nodeList.item(i);
+        org.w3c.dom.Node runScreenFadeNode = document.getElementsByTagName("RUNSCREEN_FADE_TIME").item(0);
+        RUNSCREEN_FADE_TIME = Double.parseDouble(runScreenFadeNode.getTextContent());
+
+        org.w3c.dom.Node playlistFadeNode = document.getElementsByTagName("PLAYLIST_FADE_TIME").item(0);
+        PLAYLIST_FADE_TIME = Double.parseDouble(playlistFadeNode.getTextContent());
+
+        NodeList nodeList = document.getElementsByTagName("COMMAND_COLOURS").item(0).getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            org.w3c.dom.Node command = nodeList.item(i);
+            if(command.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE){
                 commandColorMap.put(COMMAND.valueOf(command.getNodeName()), stringToColor(command.getTextContent()));
             }
-
-            NodeList faderList = document.getElementsByTagName("Faders").item(0).getChildNodes();
-            ArrayList<Fader> addList = new ArrayList<>();
-            for(int i=0; i<faderList.getLength(); i++){
-                NodeList faderChildren = faderList.item(i).getChildNodes();
-
-                Fader fader = new Fader(Integer.parseInt(faderChildren.item(0).getTextContent()), faderChildren.item(1).getTextContent(), Boolean.parseBoolean(faderChildren.item(2).getTextContent()),
-                        Integer.parseInt(faderChildren.item(3).getTextContent()), Boolean.parseBoolean(faderChildren.item(4).getTextContent()));
-                addList.add(fader);
-            }
-            faderManager.setFaderList(addList);
-
-            boolean found = false;
-            for(MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()){
-                if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent()) && MidiSystem.getMidiDevice(info).getMaxTransmitters() == 0){
-                    faderManager.setDevice(MidiSystem.getMidiDevice(info));
-                    found = true;
-                }
-            }
-
-            if(!found && !document.getElementsByTagName("MidiDevice").item(0).getTextContent().equals("null")){
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setHeaderText("Midi Device Not Found");
-                alert.showAndWait();
-
-                faderManager.setDevice(null);
-            }
-
-            for(int i=0; i < faderNameColumns.size(); i++){
-                if(faderManager.getFaderList().get(i).getName().isEmpty()){
-                    faderNameColumns.get(i).setText("...");
-                }else{
-                    faderNameColumns.get(i).setText(faderManager.getFaderList().get(i).getName());
-                }
-                faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
-            }
-
-
-        }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Load Failed");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
-            newShow();
-
         }
+
+        NodeList faderList = document.getElementsByTagName("fader");
+        ArrayList<Fader> addList = new ArrayList<>();
+        for(int i=0; i<faderList.getLength(); i++){
+            Element faderChildren = (Element) faderList.item(i);
+
+            Fader fader = new Fader(Integer.parseInt(faderChildren.getElementsByTagName("Num").item(0).getTextContent()), faderChildren.getElementsByTagName("Name").item(0).getTextContent(), Boolean.parseBoolean(faderChildren.getElementsByTagName("isMix").item(0).getTextContent()),
+                    Integer.parseInt(faderChildren.getElementsByTagName("value").item(0).getTextContent()), Boolean.parseBoolean(faderChildren.getElementsByTagName("isVisible").item(0).getTextContent()));
+            addList.add(fader);
+        }
+        faderManager.setFaderList(addList);
+
+        boolean found = false;
+        for(MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()){
+            if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent()) && MidiSystem.getMidiDevice(info).getMaxTransmitters() == 0){
+                faderManager.setDevice(MidiSystem.getMidiDevice(info));
+                found = true;
+            }
+        }
+
+        if(!found && !document.getElementsByTagName("MidiDevice").item(0).getTextContent().equals("null")){
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setHeaderText("Midi Device Not Found");
+            alert.showAndWait();
+
+            faderManager.setDevice(null);
+        }
+
+        for(int i=0; i < faderNameColumns.size(); i++){
+            if(faderManager.getFaderList().get(i).getName().isEmpty()){
+                faderNameColumns.get(i).setText("...");
+            }else{
+                faderNameColumns.get(i).setText(faderManager.getFaderList().get(i).getName());
+            }
+            faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
+        }
+
     }
 
 
@@ -883,10 +900,12 @@ public class MainController implements Initializable {
 
             // Create a DocumentBuilder
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setIgnoringElementContentWhitespace(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
 
             // Parse the XML file
-            Document document = builder.parse(selectedFile+"/data");
+            Document document = builder.parse(selectedFile+"/data.xml");
+            document.getDocumentElement().normalize();
 
             org.w3c.dom.Node sfxNode = document.getElementsByTagName("SFXDirectory").item(0);
             if(!sfxNode.getTextContent().equals("--None--")) cuesManager.setSFXDirectory(new File(sfxNode.getTextContent()));
@@ -895,35 +914,47 @@ public class MainController implements Initializable {
             org.w3c.dom.Node playlistNode = document.getElementsByTagName("PlaylistDirectory").item(0);
             if(!playlistNode.getTextContent().equals("--None--")) playlistManager.setDirectory(new File(playlistNode.getTextContent()));
 
+            NodeList excludedNodes = document.getElementsByTagName("ExcludedPlaylistFiles").item(0).getChildNodes();
+
+            for(int i=0; i < excludedNodes.getLength(); i++){
+                for(PlaylistFile playlistFile : playlistManager.getPlaylistFiles()){
+                    if(playlistFile.getFileName().equals(excludedNodes.item(i).getTextContent())){
+                        playlistFile.setExcluded(true);
+                    }
+                }
+            }
+
             cuesManager.getCues().clear();
             // Access elements by tag name
             NodeList nodeList = document.getElementsByTagName("Cue");
+
             for (int i = 0; i < nodeList.getLength(); i++) {
-                org.w3c.dom.Node cue = nodeList.item(i);
-                NodeList cueChildren = cue.getChildNodes();
+
+                Element cue = (Element) nodeList.item(i);
+                cue.normalize();
 
                 PlaylistFile playlistFile = null;
-                if (!cueChildren.item(4).getTextContent().equals("--None--")){
-                    playlistFile = cuesManager.getSFXFiles().stream().filter(x->x.getFileName().equals(cueChildren.item(4).getTextContent())).findFirst().orElse(null);
+                if (!cue.getElementsByTagName("CueFile").item(0).getTextContent().equals("--None--")){
+                    playlistFile = cuesManager.getSFXFiles().stream().filter(x->x.getFileName().equals(cue.getElementsByTagName("CueFile").item(0).getTextContent())).findFirst().orElse(null);
                 }
 
-                cuesManager.getCues().add(new Cue(cueChildren.item(0).getTextContent(),
-                        cueChildren.item(1).getTextContent(),
-                        Double.parseDouble(cueChildren.item(2).getTextContent()),
-                        COMMAND.valueOf(cueChildren.item(3).getTextContent()),
+                cuesManager.getCues().add(new Cue(cue.getElementsByTagName("CueNumber").item(0).getTextContent(),
+                        cue.getElementsByTagName("CueName").item(0).getTextContent(),
+                        Double.parseDouble(cue.getElementsByTagName("CueAuto").item(0).getTextContent()),
+                        COMMAND.valueOf(cue.getElementsByTagName("CueCommand").item(0).getTextContent()),
                         null,
-                        Double.parseDouble(cueChildren.item(5).getTextContent()),
-                        Double.parseDouble(cueChildren.item(6).getTextContent()),
+                        Double.parseDouble(cue.getElementsByTagName("CueVolume").item(0).getTextContent()),
+                        Double.parseDouble(cue.getElementsByTagName("CueTime").item(0).getTextContent()),
                         cueListTableAudio, this));
                 cuesManager.getCues().get(i).setCueFile(playlistFile);
 
-                NodeList faderNodeList = cueChildren.item(7).getChildNodes();
-                for (int j = 0; j < faderNodeList.getLength(); j++) {
-                    org.w3c.dom.Node faderNode = faderNodeList.item(j);
+                Element faders = (Element) cue.getElementsByTagName("faders").item(0);
+                for (int j = 1; j <= 32; j++) {
+                    org.w3c.dom.Node faderNode = faders.getElementsByTagName("Fader" + j).item(0);
                     if(faderNode.getTextContent().equals("...")){
-                        cuesManager.getCues().get(i).getFaderValues().set(j, null);
+                        cuesManager.getCues().get(i).getFaderValues().set(j - 1, null);
                     }else{
-                        cuesManager.getCues().get(i).getFaderValues().set(j, Double.parseDouble(faderNode.getTextContent()));
+                        cuesManager.getCues().get(i).getFaderValues().set(j - 1, Double.parseDouble(faderNode.getTextContent()));
                     }
 
                 }
@@ -999,7 +1030,16 @@ public class MainController implements Initializable {
             if(cuesManager.getSFXDirectory()!=null) book2.appendChild(document.createTextNode(cuesManager.getSFXDirectory().getAbsolutePath()));
             else book2.appendChild(document.createTextNode("--None--"));
 
-            Element book3 = document.createElement("Cues");
+            Element book3 = document.createElement("ExcludedPlaylistFiles");
+            for(PlaylistFile playlistFile : playlistManager.getPlaylistFiles()){
+                if(playlistFile.isExcluded()){
+                    Element element = document.createElement("File");
+                    element.appendChild(document.createTextNode(playlistFile.getFileName()));
+                    book3.appendChild(element);
+                }
+            }
+
+            Element book4 = document.createElement("Cues");
             for(Cue cue : cuesManager.getCues()){
                 Element num = document.createElement("CueNumber");
                 num.appendChild(document.createTextNode(cue.getCueNum()));
@@ -1042,16 +1082,20 @@ public class MainController implements Initializable {
                 cueEntry.appendChild(time);
                 cueEntry.appendChild(faders);
 
-                book3.appendChild(cueEntry);
+                book4.appendChild(cueEntry);
             }
 
             root.appendChild(book1);
             root.appendChild(book2);
             root.appendChild(book3);
+            root.appendChild(book4);
 
             // Write to XML file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
             DOMSource source = new DOMSource(document);
 
             if(!saveDestination.exists()) {
@@ -1061,7 +1105,7 @@ public class MainController implements Initializable {
             }
 
             // Specify your local file path
-            StreamResult result = new StreamResult(saveDestination + "/data");
+            StreamResult result = new StreamResult(saveDestination + "/data.xml");
             transformer.transform(source, result);
 
             preferences.put("ProjectFile", saveDestination.getAbsolutePath());
@@ -1084,6 +1128,16 @@ public class MainController implements Initializable {
 
     }
 
+    @FXML
+    protected void showModeBtn(){
+        if(checkShowMode.isSelected()){
+            checkShowMode.setSelected(false);
+            ShowSequencer.getStage().setFullScreen(false);
+        }else{
+            checkShowMode.setSelected(true);
+            showMode();
+        }
+    }
 
 
     @FXML
@@ -1307,7 +1361,7 @@ public class MainController implements Initializable {
 
             ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum());
             for(int i=0; i < currentFaderValueLabels.size(); i++){
-                currentFaderValueLabels.get(i).setStyle("");
+                currentFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em");
                 if(dBValues.get(i)==null){
                     currentFaderValueLabels.get(i).setText("");
                 }else if (dBValues.get(i)==-41.0){
@@ -1316,7 +1370,7 @@ public class MainController implements Initializable {
                     currentFaderValueLabels.get(i).setText(dBValues.get(i).toString());
                 }
                 if(dBValues.get(i)!=null && currentCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(currentCue.getFaderValues().get(i))){
-                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 14px");
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em;");
                 }
             }
 
@@ -1368,7 +1422,7 @@ public class MainController implements Initializable {
 
             ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum() + 1);
             for(int i=0; i < nextFaderValueLabels.size(); i++){
-                nextFaderValueLabels.get(i).setStyle("");
+                nextFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em");
                 if(dBValues.get(i)==null){
                     nextFaderValueLabels.get(i).setText("");
                 }else if (dBValues.get(i)==-41.0){
@@ -1377,7 +1431,7 @@ public class MainController implements Initializable {
                     nextFaderValueLabels.get(i).setText(dBValues.get(i).toString());
                 }
                 if(dBValues.get(i)!=null && nextCue.getFaderValues().get(i)!=null &&dBValues.get(i).equals(nextCue.getFaderValues().get(i))){
-                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 14px");
+                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em");
                 }
             }
 
@@ -1469,6 +1523,9 @@ public class MainController implements Initializable {
         cueListTableFaders.refresh();
         cueListTableAudio.refresh();
 
+        cueListTableAudio.getSelectionModel().clearSelection();
+        cueListTableFaders.getSelectionModel().clearSelection();
+
         ScrollBar scrollBar1 = getScrollBar(cueListTableAudio);
         ScrollBar scrollBar2 = getScrollBar(cueListTableFaders);
         if(scrollBar1!=null && scrollBar2!=null){
@@ -1489,6 +1546,27 @@ public class MainController implements Initializable {
             }
         }
         return null;
+    }
+
+    Double faderClipBoard = null;
+
+    private void cueListCopyFader() {
+        if (cueListTableFaders.getSelectionModel().getSelectedCells().isEmpty()) return;
+        TablePosition<?,?> pos = cueListTableFaders.getSelectionModel().getSelectedCells().get(0);
+        faderClipBoard = cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().get(pos.getColumn());
+        faderPaste.setDisable(false);
+    }
+
+
+    private void cueListPasteFader(){
+        if (cueListTableFaders.getSelectionModel().getSelectedCells().isEmpty() || faderClipBoard == null) return;
+
+        ObservableList<TablePosition> positions = cueListTableFaders.getSelectionModel().getSelectedCells();
+
+        for(TablePosition pos : positions){
+            cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().set(pos.getColumn(), faderClipBoard);
+        }
+        refreshTables();
     }
 
 

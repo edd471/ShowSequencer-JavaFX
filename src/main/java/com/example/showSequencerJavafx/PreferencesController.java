@@ -82,13 +82,13 @@ public class PreferencesController implements Initializable {
         colFaderType.setCellFactory(x -> new ComboBoxTableCell<>(new StringConverter<>() {
             @Override
             public String toString(Boolean aBoolean) {
-                if (aBoolean) return "Mixer";
+                if (aBoolean) return "Mix";
                 else return "Input";
             }
 
             @Override
             public Boolean fromString(String s) {
-                return s.equals("Mixer");
+                return s.equals("Mix");
             }
         }, FXCollections.observableArrayList(Arrays.asList(true, false))));
         colFaderType.setOnEditCommit(event -> {

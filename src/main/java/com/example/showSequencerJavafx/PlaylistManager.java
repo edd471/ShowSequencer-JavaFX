@@ -82,10 +82,10 @@ public class PlaylistManager {
         mainController.assertValidFiles();
 
         for(PlaylistFile file : playlistFiles){
+            file.setSelected(false);
             if(file.getState().equals(PlaylistFile.STATE.PLAYING) || file.getState().equals(PlaylistFile.STATE.PAUSED)) {
                 file.getPlayer().stopFaded(mainController.playlistVolumeSlider.getValue() ,duration);
                 file.setState(PlaylistFile.STATE.STOPPED);
-                file.setSelected(false);
                 file.getPlayer().currentTimeProperty().removeListener(playlistFileProgressListener);
             }
         }
@@ -112,19 +112,15 @@ public class PlaylistManager {
     }
 
 
-    public void start(double duration){
-        playListNumber = -1;
-
-        nextTrack(duration);
-    }
-
     public void pausePlay(double duration){
-        if(playlistFiles.stream().anyMatch(x->x.getState().equals(States.STATE.PAUSED))){
-            play(duration);
-        }else if(playlistFiles.stream().anyMatch(x->x.getState().equals(States.STATE.PLAYING))){
+        if(playlistFiles.stream().anyMatch(x->x.getState().equals(States.STATE.PLAYING))){
             pause(duration);
+        }else if(playlistFiles.stream().anyMatch(x->x.getState().equals(States.STATE.PAUSED))){
+            play(duration);
+        }else if(playListNumber>=0){
+            initiateTrack(duration);
         }else{
-            start(duration);
+            nextTrack(duration);
         }
     }
 
@@ -156,6 +152,8 @@ public class PlaylistManager {
     }
 
     public void stop(double duration, Runnable onFinished){
+        if(playlistFiles.stream().noneMatch(x->x.getState().equals(States.STATE.PLAYING)||x.getState().equals(States.STATE.PAUSED))) return;
+
         for(PlaylistFile file : playlistFiles){
             if(file.getState().equals(PlaylistFile.STATE.PLAYING) || file.getState().equals(PlaylistFile.STATE.PAUSED) || file.getProgress().get()>0) {
                 progress.bind(file.getProgress());
@@ -166,7 +164,8 @@ public class PlaylistManager {
             }
         }
 
-        playListNumber = -1;
+        playListNumber++;
+        playlistFiles.get(playListNumber).setSelected(true);
 
         mainController.playlistTotalDuration.setText("0:00");
         mainController.playlistCurrentDuration.setText("0:00");
