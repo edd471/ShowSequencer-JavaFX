@@ -138,7 +138,7 @@ public class CuesManager {
 
             if(currentCueNum>=0) {
                 cues.get(currentCueNum).setSelected(true);
-                cues.get(currentCueNum).run();
+                cues.get(currentCueNum).run(true);
                 faderManager.runFaders(cues.get(currentCueNum).getFaderValues());
             }
 
@@ -209,7 +209,7 @@ public class CuesManager {
 
             faderManager.runFaders(getBacktrackFaderDb(currentCueNum));
 
-            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(); nextCue.setSelected(true);}));
+            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(true); nextCue.setSelected(true);}));
             playDelay.play();
         }));
         delay.play();
