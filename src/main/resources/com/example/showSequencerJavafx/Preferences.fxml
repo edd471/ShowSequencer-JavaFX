@@ -18,8 +18,9 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
 
-<BorderPane fx:id="" prefHeight="602.0" prefWidth="533.0" xmlns="http://javafx.com/javafx/17.0.6" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.showSequencerJavafx.PreferencesController">
+<BorderPane fx:id="" prefHeight="602.0" prefWidth="533.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.showSequencerJavafx.PreferencesController">
    <bottom>
       <Pane prefHeight="25.0" prefWidth="1479.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER" />
    </bottom>
@@ -27,47 +28,131 @@
        <VBox BorderPane.alignment="CENTER">
            <Accordion VBox.vgrow="ALWAYS">
                <panes>
-                   <TitledPane animated="false" text="Track Fading">
+                   <TitledPane animated="false" text="Audio Fading">
                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <GridPane gridLinesVisible="true" layoutX="20.0" layoutY="20.0" prefHeight="105.0"
-                                     prefWidth="511.0" AnchorPane.bottomAnchor="335.0" AnchorPane.leftAnchor="0.0"
-                                     AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <GridPane gridLinesVisible="true" layoutX="20.0" layoutY="20.0" prefHeight="105.0" prefWidth="511.0" AnchorPane.bottomAnchor="335.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                <columnConstraints>
-                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                </columnConstraints>
                                <rowConstraints>
-                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                </rowConstraints>
                                <Label text="Minimum Fade Time (0.1 Recommended)">
                                    <padding>
-                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                    </padding>
                                </Label>
                                <Label text="Run Screen Fade Time" GridPane.rowIndex="1">
                                    <padding>
-                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                    </padding>
                                </Label>
                                <Label text="Playlist Fade Time" GridPane.rowIndex="2">
                                    <padding>
-                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                    </padding>
                                </Label>
-                               <TextField fx:id="txtMinFadeTime" GridPane.columnIndex="1"/>
-                               <TextField fx:id="txtRunScreenFadeTime" GridPane.columnIndex="1"
-                                          GridPane.rowIndex="1"/>
-                               <TextField fx:id="txtPlaylistFadeTime" GridPane.columnIndex="1"
-                                          GridPane.rowIndex="2"/>
+                               <TextField fx:id="txtMinFadeTime" GridPane.columnIndex="1" />
+                               <TextField fx:id="txtRunScreenFadeTime" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                               <TextField fx:id="txtPlaylistFadeTime" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                            </GridPane>
                        </AnchorPane>
                    </TitledPane>
                    <TitledPane animated="false" text="Command Colours ">
                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <GridPane gridLinesVisible="true" layoutX="30.0" layoutY="30.0" prefHeight="207.0"
-                                     prefWidth="491.0" AnchorPane.bottomAnchor="223.0" AnchorPane.leftAnchor="0.0"
+                           <GridPane gridLinesVisible="true" layoutX="30.0" layoutY="30.0" prefHeight="207.0" prefWidth="491.0" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                               <columnConstraints>
+                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                               </columnConstraints>
+                               <rowConstraints>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                               </rowConstraints>
+                               <Label text="NONE">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="PLAY" GridPane.rowIndex="1">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="STOP ALL" GridPane.rowIndex="4">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="STOP" GridPane.rowIndex="2">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="VOLUME" GridPane.rowIndex="3">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="PLAYLIST START" GridPane.rowIndex="5">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="PLAYLIST CONTINUE" GridPane.rowIndex="6">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <Label text="PLAYLIST FADE" GridPane.rowIndex="7">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                   </padding>
+                               </Label>
+                               <ColorPicker fx:id="pickerNONE" GridPane.columnIndex="1" />
+                               <ColorPicker fx:id="pickerPLAY" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                               <ColorPicker fx:id="pickerSTOP" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                               <ColorPicker fx:id="pickerVOLUME" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                               <ColorPicker fx:id="pickerSTOP_ALL" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                               <ColorPicker fx:id="pickerPLAYLIST_START" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                               <ColorPicker fx:id="pickerPLAYLIST_CONT" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                               <ColorPicker fx:id="pickerPLAYLIST_FADE" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                           </GridPane>
+                       </AnchorPane>
+                   </TitledPane>
+                   <TitledPane animated="false" text="Faders Config">
+                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <HBox layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                               <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="213.0" text="MIDI Device: " />
+                               <ComboBox fx:id="comboBoxMidiDevice" onAction="#midiDeviceChosen" prefWidth="150.0" visibleRowCount="13" />
+                           </HBox>
+                           <TableView fx:id="faderConfigTable" editable="true" layoutX="20.0" layoutY="36.0" prefHeight="414.0" prefWidth="511.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0">
+                               <columns>
+                                   <TableColumn fx:id="colFaderNum" prefWidth="56.0" text="Fader" />
+                                   <TableColumn fx:id="colFaderName" prefWidth="174.0" text="Name" />
+                                   <TableColumn fx:id="colFaderType" prefWidth="147.0" text="Type" />
+                                   <TableColumn fx:id="colFaderValue" prefWidth="84.0" text="Value" />
+                                   <TableColumn fx:id="colIsVisible" prefWidth="49.0" text="Visible" />
+                               </columns>
+                               <columnResizePolicy>
+                                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                               </columnResizePolicy>
+                           </TableView>
+                       </AnchorPane>
+                   </TitledPane>
+                   <TitledPane animated="false" text="dB Colours ">
+                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <GridPane gridLinesVisible="true" layoutX="26.0" layoutY="30.0" prefHeight="346.0"
+                                     prefWidth="499.0" AnchorPane.bottomAnchor="59.0" AnchorPane.leftAnchor="0.0"
                                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                <columnConstraints>
                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -82,101 +167,156 @@
                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                                </rowConstraints>
-                               <Label text="NONE">
+                               <Label text="-∞">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="PLAY" GridPane.rowIndex="1">
+                               <Label text="-40" GridPane.rowIndex="1">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="STOP ALL" GridPane.rowIndex="4">
+                               <Label text="-15" GridPane.rowIndex="4">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="STOP" GridPane.rowIndex="2">
+                               <Label text="-30" GridPane.rowIndex="2">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="VOLUME" GridPane.rowIndex="3">
+                               <Label text="-20" GridPane.rowIndex="3">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="PLAYLIST START" GridPane.rowIndex="5">
+                               <Label text="-10" GridPane.rowIndex="5">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="PLAYLIST CONTINUE" GridPane.rowIndex="6">
+                               <Label text="0" GridPane.rowIndex="9">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <Label text="PLAYLIST FADE" GridPane.rowIndex="7">
+                               <Label text="3" GridPane.rowIndex="10">
                                    <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                                    </padding>
                                </Label>
-                               <ColorPicker fx:id="pickerNONE" GridPane.columnIndex="1"/>
-                               <ColorPicker fx:id="pickerPLAY" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                               <ColorPicker fx:id="pickerSTOP" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
-                               <ColorPicker fx:id="pickerVOLUME" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
-                               <ColorPicker fx:id="pickerSTOP_ALL" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
-                               <ColorPicker fx:id="pickerPLAYLIST_START" GridPane.columnIndex="1"
-                                            GridPane.rowIndex="5"/>
-                               <ColorPicker fx:id="pickerPLAYLIST_CONT" GridPane.columnIndex="1"
-                                            GridPane.rowIndex="6"/>
-                               <ColorPicker fx:id="pickerPLAYLIST_FADE" GridPane.columnIndex="1"
-                                            GridPane.rowIndex="7"/>
+                               <ColorPicker fx:id="pickerINF" GridPane.columnIndex="1">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN40" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN30" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN20" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN15" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN10" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="picker0" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="picker3" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <Label text="5" GridPane.rowIndex="11">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </padding>
+                               </Label>
+                               <Label text="10" GridPane.rowIndex="12">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </padding>
+                               </Label>
+                               <ColorPicker fx:id="picker5" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="picker10" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <Label text="-7.5" GridPane.rowIndex="6">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </padding>
+                               </Label>
+                               <Label text="-5" GridPane.rowIndex="7">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </padding>
+                               </Label>
+                               <Label text="-3" GridPane.rowIndex="8">
+                                   <padding>
+                                       <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                   </padding>
+                               </Label>
+                               <ColorPicker fx:id="pickerN75" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN5" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
+                               <ColorPicker fx:id="pickerN3" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                   <value>
+                                       <Color/>
+                                   </value>
+                               </ColorPicker>
                            </GridPane>
-                       </AnchorPane>
-                   </TitledPane>
-                   <TitledPane animated="false" text="Faders Config">
-                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <HBox layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0"
-                                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                               <Label alignment="CENTER_RIGHT" maxHeight="1.7976931348623157E308"
-                                      maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="213.0"
-                                      text="MIDI Device: "/>
-                               <ComboBox fx:id="comboBoxMidiDevice" onAction="#midiDeviceChosen" prefWidth="150.0"
-                                         visibleRowCount="13"/>
-                           </HBox>
-                           <TableView fx:id="faderConfigTable" editable="true" layoutX="20.0" layoutY="36.0"
-                                      prefHeight="414.0" prefWidth="511.0" AnchorPane.bottomAnchor="0.0"
-                                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                      AnchorPane.topAnchor="35.0">
-                               <columns>
-                                   <TableColumn fx:id="colFaderNum" prefWidth="56.0" text="Fader"/>
-                                   <TableColumn fx:id="colFaderName" prefWidth="174.0" text="Name"/>
-                                   <TableColumn fx:id="colFaderType" prefWidth="147.0" text="Type"/>
-                                   <TableColumn fx:id="colFaderValue" prefWidth="84.0" text="Value"/>
-                                   <TableColumn fx:id="colIsVisible" prefWidth="49.0" text="Visible"/>
-                               </columns>
-                               <columnResizePolicy>
-                                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                               </columnResizePolicy>
-                           </TableView>
                        </AnchorPane>
                    </TitledPane>
                </panes>
            </Accordion>
            <HBox prefHeight="51.0" prefWidth="533.0">
-               <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                       onAction="#close" text="Close" HBox.hgrow="ALWAYS">
+               <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#close" text="Close" HBox.hgrow="ALWAYS">
                    <HBox.margin>
-                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                    </HBox.margin>
                </Button>
-               <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                       onAction="#saveAndClose" text="Save &amp; Close" HBox.hgrow="ALWAYS">
+               <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveAndClose" text="Save &amp; Close" HBox.hgrow="ALWAYS">
                    <HBox.margin>
-                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                    </HBox.margin>
                </Button>
            </HBox>

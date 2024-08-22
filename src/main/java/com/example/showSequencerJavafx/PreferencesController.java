@@ -27,12 +27,15 @@ public class PreferencesController implements Initializable {
     public MidiDevice device;
     public double minFadeTime, runScreenFadeTime, playlistFadeTime;
     public Color colorNone, colorPLAY, colorSTOP, colorVOLUME, colorSTOP_ALL, colorPLAYLIST_START, colorPLAYLIST_CONT, colorPLAYLIST_FADE;
+    public Color colorINF, colorN40, colorN30, colorN20, colorN15, colorN10, colorN75, colorN5, colorN3, color0, color3, color5, color10;
     public ObservableList<Fader> tempFaderList = FXCollections.observableArrayList();
 
     @FXML
     private TextField txtMinFadeTime, txtRunScreenFadeTime, txtPlaylistFadeTime;
     @FXML
     private ColorPicker pickerNONE, pickerPLAY, pickerSTOP, pickerVOLUME, pickerSTOP_ALL, pickerPLAYLIST_START, pickerPLAYLIST_CONT, pickerPLAYLIST_FADE;
+    @FXML
+    private ColorPicker pickerINF, pickerN40, pickerN30, pickerN20, pickerN15, pickerN10, pickerN75, pickerN5, pickerN3,picker0, picker3, picker5, picker10;
     @FXML
     private ComboBox<MidiDevice.Info> comboBoxMidiDevice;
     @FXML
@@ -157,6 +160,35 @@ public class PreferencesController implements Initializable {
         colorPLAYLIST_CONT = mainController.commandColorMap.get(MainController.COMMAND.PLAYLIST_CONT);
         pickerPLAYLIST_FADE.setValue(mainController.commandColorMap.get(MainController.COMMAND.PLAYLIST_FADE));
         colorPLAYLIST_FADE = mainController.commandColorMap.get(MainController.COMMAND.PLAYLIST_FADE);
+
+        pickerINF.setValue(mainController.dBColorMap.get((double) -41));
+        colorINF = mainController.dBColorMap.get((double)-41);
+        pickerN40.setValue(mainController.dBColorMap.get((double)-40));
+        colorN40 = mainController.dBColorMap.get((double)-40);
+        pickerN30.setValue(mainController.dBColorMap.get((double)-30));
+        colorN30 = mainController.dBColorMap.get((double)-30);
+        pickerN20.setValue(mainController.dBColorMap.get((double)-20));
+        colorN20 = mainController.dBColorMap.get((double)-20);
+        pickerN15.setValue(mainController.dBColorMap.get((double)-15));
+        colorN15 = mainController.dBColorMap.get((double)-15);
+        pickerN10.setValue(mainController.dBColorMap.get((double)-10));
+        colorN10 = mainController.dBColorMap.get((double)-10);
+        pickerN75.setValue(mainController.dBColorMap.get(-7.5));
+        colorN75 = mainController.dBColorMap.get(-7.5);
+        pickerN5.setValue(mainController.dBColorMap.get((double)-5));
+        colorN5 = mainController.dBColorMap.get((double)-5);
+        pickerN3.setValue(mainController.dBColorMap.get((double)-3));
+        colorN3 = mainController.dBColorMap.get((double)-3);
+        picker0.setValue(mainController.dBColorMap.get((double)0));
+        color0 = mainController.dBColorMap.get((double)0);
+        picker3.setValue(mainController.dBColorMap.get((double)3));
+        color3 = mainController.dBColorMap.get((double)3);
+        picker5.setValue(mainController.dBColorMap.get((double)5));
+        color5 = mainController.dBColorMap.get((double)5);
+        picker10.setValue(mainController.dBColorMap.get((double)10));
+        color10 = mainController.dBColorMap.get((double)10);
+
+
     }
 
     @FXML
@@ -195,6 +227,20 @@ public class PreferencesController implements Initializable {
             colorPLAYLIST_START = pickerPLAYLIST_START.getValue();
             colorPLAYLIST_CONT = pickerPLAYLIST_CONT.getValue();
             colorPLAYLIST_FADE = pickerPLAYLIST_FADE.getValue();
+
+            colorINF = pickerINF.getValue();
+            colorN40 = pickerN40.getValue();
+            colorN30 = pickerN30.getValue();
+            colorN20 = pickerN20.getValue();
+            colorN15 = pickerN15.getValue();
+            colorN10 = pickerN10.getValue();
+            colorN75 = pickerN75.getValue();
+            colorN5 = pickerN5.getValue();
+            colorN3 = pickerN3.getValue();
+            color0 = picker0.getValue();
+            color3 = picker3.getValue();
+            color5 = picker5.getValue();
+            color10 = picker10.getValue();
 
             mainController.setPreferences(this);
 

@@ -54,7 +54,7 @@ public class MainController implements Initializable {
     public double PLAYLIST_FADE_TIME = 1;
     public double MIN_FADE_TIME = 0.1;
     public final Map<COMMAND, Color> commandColorMap = new HashMap<>();
-
+    public final Map<Double, Color> dBColorMap = new HashMap<>();
 
     private File projectFile = null;
     private Preferences preferences;
@@ -279,6 +279,20 @@ public class MainController implements Initializable {
             commandColorMap.put(command, Color.WHITE);
         }
 
+        dBColorMap.put((double) -41, Color.BLACK);
+        dBColorMap.put((double) -40, Color.BLACK);
+        dBColorMap.put((double) -30, Color.BLACK);
+        dBColorMap.put((double) -20, Color.BLACK);
+        dBColorMap.put((double) -15, Color.BLACK);
+        dBColorMap.put((double) -10, Color.BLACK);
+        dBColorMap.put(-7.5, Color.BLACK);
+        dBColorMap.put((double) -5, Color.BLACK);
+        dBColorMap.put((double) -3, Color.BLACK);
+        dBColorMap.put((double) 0, Color.BLACK);
+        dBColorMap.put((double) 3, Color.BLACK);
+        dBColorMap.put((double) 5, Color.BLACK);
+        dBColorMap.put((double) 10, Color.BLACK);
+
         comboBoxCueJump.setConverter(new StringConverter<>() {
             @Override
             public String toString(Cue cue) {
@@ -462,8 +476,7 @@ public class MainController implements Initializable {
         });
 
         ObservableList<Double> doubleList = FXCollections.observableArrayList(Arrays.asList(null, (double) -41, (double) -40, (double) -30, (double) -20, (double) -15, (double) -10,
-                -7.5, (double) -5, (double) -3, (double) 0, (double) 3,
-                (double) 0, (double) 3, (double) 5, (double) 10));
+                -7.5, (double) -5, (double) -3, (double) 0, (double) 3, (double) 5, (double) 10));
 
         for(TableColumn<Cue, Double> col : faderColumns){
             col.setCellValueFactory(param -> new SimpleObjectProperty<>(param.getValue().getFaderValues().get(faderColumns.indexOf(col))));
@@ -617,6 +630,20 @@ public class MainController implements Initializable {
         commandColorMap.put(COMMAND.PLAYLIST_CONT, preferences.colorPLAYLIST_CONT);
         commandColorMap.put(COMMAND.PLAYLIST_FADE, preferences.colorPLAYLIST_FADE);
 
+        dBColorMap.put((double) -41, preferences.colorINF);
+        dBColorMap.put((double) -40, preferences.colorN40);
+        dBColorMap.put((double) -30, preferences.colorN30);
+        dBColorMap.put((double) -20, preferences.colorN20);
+        dBColorMap.put((double) -15, preferences.colorN15);
+        dBColorMap.put((double) -10, preferences.colorN10);
+        dBColorMap.put(-7.5, preferences.colorN75);
+        dBColorMap.put((double) -5, preferences.colorN5);
+        dBColorMap.put((double) -3, preferences.colorN3);
+        dBColorMap.put((double) 0, preferences.color0);
+        dBColorMap.put((double) 3, preferences.color3);
+        dBColorMap.put((double) 5, preferences.color5);
+        dBColorMap.put((double) 10, preferences.color10);
+
         savePreferences();
 
     }
@@ -647,15 +674,26 @@ public class MainController implements Initializable {
             book3.appendChild(document.createTextNode(String.valueOf(PLAYLIST_FADE_TIME)));
 
             Element book4 = document.createElement("COMMAND_COLOURS");
-            int index = 0;
+            int i = 0;
             for(Color color : commandColorMap.values()){
-                Element command = document.createElement(commandColorMap.keySet().toArray()[index].toString());
+                Element command = document.createElement(commandColorMap.keySet().toArray()[i].toString());
                 command.appendChild(document.createTextNode(colorToString(color)));
                 book4.appendChild(command);
-                index++;
+                i++;
             }
 
-            Element book5 = document.createElement("Faders");
+            Element book5 = document.createElement("DB_COLOURS");
+            int j = 0;
+            for(Color color : dBColorMap.values()){
+                System.out.println(dBColorMap.keySet().toArray()[j].toString());
+                Element command = document.createElement("dBValue_" + dBColorMap.keySet().toArray()[j].toString());
+                command.appendChild(document.createTextNode(colorToString(color)));
+                book5.appendChild(command);
+                j++;
+            }
+
+
+            Element book6 = document.createElement("Faders");
             for(Fader fader : faderManager.getFaderList()){
                 Element faderElement = document.createElement("fader");
 
@@ -679,15 +717,16 @@ public class MainController implements Initializable {
                 faderVisible.appendChild(document.createTextNode(Boolean.toString(fader.getIsVisible().get())));
                 faderElement.appendChild(faderVisible);
 
-                book5.appendChild(faderElement);
+                book6.appendChild(faderElement);
             }
 
-            Element book6 = document.createElement("MidiDevice");
+            Element book7 = document.createElement("MidiDevice");
             if(faderManager.getDevice()!=null){
-                book6.appendChild(document.createTextNode(faderManager.getDevice().getDeviceInfo().toString()));
+                book7.appendChild(document.createTextNode(faderManager.getDevice().getDeviceInfo().toString()));
             }else{
-                book6.appendChild(document.createTextNode("null"));
+                book7.appendChild(document.createTextNode("null"));
             }
+
 
             root.appendChild(book1);
             root.appendChild(book2);
@@ -695,6 +734,7 @@ public class MainController implements Initializable {
             root.appendChild(book4);
             root.appendChild(book5);
             root.appendChild(book6);
+            root.appendChild(book7);
 
             // Write to XML file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -742,11 +782,19 @@ public class MainController implements Initializable {
         org.w3c.dom.Node playlistFadeNode = document.getElementsByTagName("PLAYLIST_FADE_TIME").item(0);
         PLAYLIST_FADE_TIME = Double.parseDouble(playlistFadeNode.getTextContent());
 
-        NodeList nodeList = document.getElementsByTagName("COMMAND_COLOURS").item(0).getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            org.w3c.dom.Node command = nodeList.item(i);
+        NodeList commandColourNodes = document.getElementsByTagName("COMMAND_COLOURS").item(0).getChildNodes();
+        for (int i = 0; i < commandColourNodes.getLength(); i++) {
+            org.w3c.dom.Node command = commandColourNodes.item(i);
             if(command.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE){
                 commandColorMap.put(COMMAND.valueOf(command.getNodeName()), stringToColor(command.getTextContent()));
+            }
+        }
+
+        NodeList dBColourNodes = document.getElementsByTagName("DB_COLOURS").item(0).getChildNodes();
+        for (int i = 0; i < dBColourNodes.getLength(); i++) {
+            org.w3c.dom.Node color = dBColourNodes.item(i);
+            if(color.getNodeType() == org.w3c.dom.Node.ELEMENT_NODE){
+                dBColorMap.put(Double.parseDouble(color.getNodeName().replace("dBValue_", "")), stringToColor(color.getTextContent()));
             }
         }
 
@@ -1370,7 +1418,7 @@ public class MainController implements Initializable {
                     currentFaderValueLabels.get(i).setText(dBValues.get(i).toString());
                 }
                 if(dBValues.get(i)!=null && currentCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(currentCue.getFaderValues().get(i))){
-                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em;");
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-text-fill: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
                 }
             }
 
@@ -1422,17 +1470,22 @@ public class MainController implements Initializable {
 
             ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum() + 1);
             for(int i=0; i < nextFaderValueLabels.size(); i++){
+
                 nextFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em");
-                if(dBValues.get(i)==null){
+
+                if(dBValues.get(i)!=null && nextCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(nextCue.getFaderValues().get(i))){
+                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-text-fill: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
+                    if(dBValues.get(i)==null){
+                        nextFaderValueLabels.get(i).setText("");
+                    }else if (dBValues.get(i)==-41.0){
+                        nextFaderValueLabels.get(i).setText("-∞");
+                    }else{
+                        nextFaderValueLabels.get(i).setText(dBValues.get(i).toString());
+                    }
+                } else{
                     nextFaderValueLabels.get(i).setText("");
-                }else if (dBValues.get(i)==-41.0){
-                    nextFaderValueLabels.get(i).setText("-∞");
-                }else{
-                    nextFaderValueLabels.get(i).setText(dBValues.get(i).toString());
                 }
-                if(dBValues.get(i)!=null && nextCue.getFaderValues().get(i)!=null &&dBValues.get(i).equals(nextCue.getFaderValues().get(i))){
-                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em");
-                }
+
             }
 
         }else{
