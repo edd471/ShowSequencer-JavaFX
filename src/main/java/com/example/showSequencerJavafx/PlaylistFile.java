@@ -7,8 +7,10 @@ import javafx.scene.media.Media;
 
 import java.net.URI;
 
+/**
+ * Class to contain media player wrapper and associated variables.
+ */
 public class PlaylistFile implements States{
-
 
     private final TableView<PlaylistFile> tableView;
     private final String fileName;
@@ -16,57 +18,97 @@ public class PlaylistFile implements States{
     private boolean excluded;
     private STATE state = STATE.STOPPED;
     private final MediaPlayerWrapper mediaPlayerWrapper;
+    private boolean selected = false;
+
     public final MainController mainController;
     public final Slider slider;
-    private boolean selected = false;
-    public STATE getState() {
-        return state;
-    }
 
+
+    @Override
     public boolean isSelected(){return selected;}
 
+    /**Setter for playlistFile state
+     * @param state State of playlistFile
+     */
     public void setState(STATE state) {
         this.state = state;
         tableView.refresh();
     }
 
-    private final String filePath;
+    /**Getter for playlistFile state
+     * @return State of playlistFile
+     */
+    public STATE getState() {
+        return state;
+    }
 
+    /**Getter for fade progress
+     * @return Double property containing progress percentage of fade.
+     */
     public SimpleDoubleProperty getProgress(){
         return mediaPlayerWrapper.getFadeProgress();
     }
 
+    /**Getter for media file name
+     * @return Name of media file
+     */
     public String getFileName() {
         return fileName;
     }
 
+    /**Setter for selected
+     * @param selected True if selected, false otherwise.
+     */
     public void setSelected(boolean selected) {this.selected = selected;}
 
+    /**Setter for the order position of the playlistFile
+     * @param playlistOrder Order position of playlistFile
+     */
     public void setPlaylistOrder(int playlistOrder) {
         this.playlistOrder = playlistOrder;
     }
 
+    /**Getter for playlistOrder
+     * @return Order position of playlistFile
+     */
     public int getPlaylistOrder() {
         return playlistOrder;
     }
 
+    /**Getter for excluded
+     * @return True if excluded, false otherwise.
+     */
     public boolean isExcluded() {
         return excluded;
     }
 
+    /**Setter for excluded
+     * @param excluded True if excluded, false otherwise.
+     */
     public void setExcluded(boolean excluded) {
         this.excluded = excluded;
     }
 
+    /**Getter for media player wrapper
+     * @return Media player Wrapper
+     */
     public MediaPlayerWrapper getPlayer(){
         return mediaPlayerWrapper;
     }
 
-    public PlaylistFile(String fileName, int playlistOrder, boolean excluded, String filePath, URI uri, TableView<PlaylistFile> tableView, MainController mainController, Slider slider) {
+    /**Constructor for playlistFile
+     * @param fileName Name of media file
+     * @param playlistOrder Order position of playlistFile
+     * @param excluded True if excluded, false otherwise
+     * @param uri Path to media file
+     * @param tableView Table containing playlistFile
+     * @param mainController Main controller for GUI
+     * @param slider Slider controlling playlistFile volume
+     */
+    public PlaylistFile(String fileName, int playlistOrder, boolean excluded, URI uri, TableView<PlaylistFile> tableView, MainController mainController, Slider slider) {
         this.excluded = excluded;
         this.playlistOrder = playlistOrder;
         this.fileName = fileName;
-        this.filePath = filePath;
         this.tableView = tableView;
         this.mainController = mainController;
         this.slider = slider;
@@ -76,11 +118,13 @@ public class PlaylistFile implements States{
 
     }
 
+    /**Copy Constructor
+     * @param playlistFile PlaylistFile to copy
+     */
     public PlaylistFile(PlaylistFile playlistFile){
         this.excluded = playlistFile.excluded;
         this.playlistOrder = playlistFile.playlistOrder;
         this.fileName = playlistFile.fileName;
-        this.filePath = playlistFile.filePath;
         this.tableView = playlistFile.tableView;
         this.state = playlistFile.state;
         this.mainController = playlistFile.mainController;

@@ -13,6 +13,10 @@ import javafx.scene.input.KeyEvent;
 import javafx.util.StringConverter;
 
 
+/**Custom Table Cell for better editing of text values
+ * @param <S> Type contained in table row
+ * @param <T> Type contained in table cell
+ */
 public class EditCell<S extends Cue, T> extends TableCell<S, T> {
 
     // Text field for editing
@@ -22,6 +26,10 @@ public class EditCell<S extends Cue, T> extends TableCell<S, T> {
     // Converter for converting the text in the text field to the user type, and vice-versa:
     private final StringConverter<T> converter ;
 
+    /**Constructor for creating edit cell.
+     * @param col Name of variable in table cell
+     * @param converter String converter for table value
+     */
     public EditCell(String col, StringConverter<T> converter) {
         this.col = col;
         this.converter = converter ;
@@ -85,8 +93,11 @@ public class EditCell<S extends Cue, T> extends TableCell<S, T> {
 
     };
 
-    /**
-     * Convenience method for creating an EditCell for a String value.
+
+    /**Convenience method for creating an EditCell for a String value.
+     * @param col Name of variable in table cell
+     * @param <S> Type contained in table row
+     * @return New edit cell for strings
      */
     public static <S extends Cue> EditCell<S, String> createStringEditCell(String col) {
         return new EditCell<>(col, IDENTITY_CONVERTER);

@@ -12,8 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CuesManager {
 
+/**Class to contain and manage all cues*/
+public class CuesManager {
 
     private int currentCueNum;
     private final ObservableList<Cue> cues = FXCollections.observableArrayList();
@@ -26,7 +27,9 @@ public class CuesManager {
     private final FaderManager faderManager;
 
 
-
+    /**Cue manager constructor. Sets Variables and gets references to other manager classes
+     * @param mainController Controller class for main menu
+     */
     public CuesManager(MainController mainController){
         this.mainController = mainController;
         this.playlistManager = mainController.getPlaylistManager();
@@ -41,61 +44,102 @@ public class CuesManager {
     }
 
 
+    /**Getter for Current cue number
+     * @return Number of current cue
+     */
     public int getCurrentCueNum(){
         return currentCueNum;
     }
 
-    public void setCurrentCueVolume(double i) {
+    /**Setter for master cue volume. Sets all PLAY cues' players volumes according to
+     * the input volume and the cues individual volume parameters.
+     * @param volume Main cue volume
+     */
+    public void setCurrentCueVolume(double volume) {
         for(Cue cue : cues){
-            if(cue.getCueFile()!=null && cue.getCueCommand().equals(MainController.COMMAND.PLAY) && cue.getCueFile().getPlayer().getFadeProgress().get()==1){
-                cue.getCueFile().getPlayer().setVolume((cue.getCueVol().get()/100)*(i/100));
+            if(cue.getCueFile()!=null && cue.getCueCommand().equals(MainController.COMMAND.PLAY) &&
+               cue.getCueFile().getPlayer().getFadeProgress().get()==1){
+
+                cue.getCueFile().getPlayer().setVolume((cue.getCueVol().get()/100)*(volume/100));
             }
         }
     }
 
+    /**Getter for initial cue volume.
+     * @return Master cue volume before any cues are run
+     */
     public double getInitialCueVolume() {
         return initialCueVolume;
     }
 
+    /**Setter for initial cue volume
+     * @param i Master cue volume before any cues are run
+     */
     public void setInitialCueVolume(double i) {
         initialCueVolume = i;
     }
 
+    /**Getter for SFX files
+     * @return List of available sound effect playlistFiles
+     */
     public ObservableList<PlaylistFile> getSFXFiles() {
         return SFXFiles;
     }
 
+    /**Getter for cue clipboard
+     * @return List of cues in the clipboard
+     */
     public ArrayList<Cue> getCueClipboard() {
         return cueClipboard;
     }
 
+    /**Getter for cues list
+     * @return List of all cues
+     */
     public ObservableList<Cue> getCues() {
         return cues;
     }
 
+    /**Setter for SFX directory
+     * @param selectedDirectory Directory containing SFX files
+     */
     public void setSFXDirectory(File selectedDirectory){
         sfxDirectory = selectedDirectory;
 
         List<File> files = List.of(Objects.requireNonNull(selectedDirectory.listFiles()));
-        List<File> musicFiles = files.stream().filter(x -> x.getName().endsWith(".mp3") || x.getName().endsWith(".wav") || x.getName().endsWith(".mpeg")).toList();
+        List<File> musicFiles = files.stream().filter(x -> x.getName().endsWith(".mp3") ||
+                                                           x.getName().endsWith(".wav") ||
+                                                           x.getName().endsWith(".mpeg")).toList();
 
         SFXFiles.clear();
         int i = 1;
         for (File musicFile : musicFiles) {
-            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), mainController.getPlaylistTable(), mainController, mainController.cueListVolumeSlider);
+            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false,
+                                                    Paths.get(musicFile.getAbsolutePath()).toUri(),
+                                                    mainController.getPlaylistTable(), mainController,
+                                                    mainController.cueListVolumeSlider);
             SFXFiles.add(newFile);
             i++;
         }
     }
 
+    /**Getter for SFX directory
+     * @return Directory containing SFX files
+     */
     public File getSFXDirectory() {
         return sfxDirectory;
     }
 
+    /**Pastes a single cue from the clipboard into the provided index
+     * @param selectedIndex Index of cue to be replaced with clipboard
+     */
     public void pasteCue(int selectedIndex) {
         getCues().set(selectedIndex, new Cue(cueClipboard.get(0)));
     }
 
+    /**Adds all cues from the clipboard to the cues list starting at the provided index
+     * @param selectionStart Index to add cues below
+     */
     public void pasteCueAsNew(int selectionStart) {
         int currentSelection = selectionStart;
         for (Cue cue : cueClipboard){
@@ -104,6 +148,9 @@ public class CuesManager {
         }
     }
 
+    /**Clears clipboard and adds copies of provided cues to cue clipboard.
+     * @param selectedItems Items to copy to clipboard
+     */
     public void copyCues(ObservableList<Cue> selectedItems) {
         cueClipboard.clear();
         for(Cue cue : selectedItems){
@@ -111,9 +158,11 @@ public class CuesManager {
         }
     }
 
+    /**Add new cue with default parameters to cue list
+     */
     public void addCue() {
-
-        Cue newCue = new Cue("0.0", "", -1, MainController.COMMAND.NONE, null, 75, 0, mainController.getCueAudioTable(), mainController);
+        Cue newCue = new Cue("0.0", "", -1, MainController.COMMAND.NONE, null,
+                      75, 0, mainController.getCueAudioTable(), mainController);
         if(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()>=0){
             cues.add(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()+1,newCue);
         } else {
@@ -121,6 +170,9 @@ public class CuesManager {
         }
     }
 
+    /**Removes all provided cues from the cue list and stops them from playing
+     * @param selectedCues List of cues to remove
+     */
     public void removeCue(List<Cue> selectedCues) {
         for (Cue cue : selectedCues) {
             cue.stop();
@@ -128,6 +180,10 @@ public class CuesManager {
         }
     }
 
+    /**Increments current cue number. If on first cue sets the initial cue volume. Runs the cue
+     * and sends fader values to faderManger to run. Sets selected to true for the running cue and false
+     * for the previous cue.
+     */
     public void next() {
         if(currentCueNum<cues.size()-1){
             if(currentCueNum ==-1) setInitialCueVolume(mainController.cueListVolumeSlider.getValue());
@@ -141,10 +197,14 @@ public class CuesManager {
                 cues.get(currentCueNum).run(true);
                 faderManager.runFaders(cues.get(currentCueNum).getFaderValues());
             }
-
         }
     }
 
+    /**Decrements current cue number. If on first cue resets the cues.
+     * Backtracks the previous cue and replays the new current cue.
+     * Sends fader values found by looking up the last values for each fader in the cue list.
+     * Sets selected for current cue and unsets selected for previous cue.
+     */
     public void previous() {
         if(currentCueNum >0){
             cues.get(currentCueNum).setSelected(false);
@@ -154,12 +214,15 @@ public class CuesManager {
             cues.get(currentCueNum).setSelected(true);
             cues.get(currentCueNum).replay();
             faderManager.runFaders(getBacktrackFaderDb(currentCueNum));
-
         }else{
             mainController.cueListReset();
         }
     }
 
+    /**Finds most recent fader value from a list of previous cues for each fader.
+     * @param currentCueNum Index to get previous cues from inclusively
+     * @return List of fader values.
+     */
     public ArrayList<Double> getBacktrackFaderDb (int currentCueNum){
         ArrayList<Double> result = new ArrayList<>();
 
@@ -175,13 +238,15 @@ public class CuesManager {
                     }
                 }
             }
-
             result.add(addVar);
         }
-
         return result;
     }
 
+    /**Resets cues. After small delay for reset to complete, sets correct master cue volume for
+     * new cue index. After small delay for master cue volume to change, run cue and faders.
+     * @param selectedIndex Index of cue to jump to.
+     */
     public void jumpTo(int selectedIndex) {
         reset();
 
@@ -209,7 +274,8 @@ public class CuesManager {
 
             faderManager.runFaders(getBacktrackFaderDb(currentCueNum));
 
-            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05), event2 -> {nextCue.run(true); nextCue.setSelected(true);}));
+            Timeline playDelay = new Timeline(new KeyFrame(Duration.seconds(mainController.MIN_FADE_TIME + 0.05),
+                                              event2 -> {nextCue.run(true); nextCue.setSelected(true);}));
             playDelay.play();
         }));
         delay.play();
@@ -218,7 +284,9 @@ public class CuesManager {
     }
 
 
-
+    /**Sets current cue number to -1. Stops all cues. Sets all faders to min.
+     * Stops any volume fades and fades master cue volume to initial cue volume.
+     */
     public void reset() {
         currentCueNum = -1;
 
@@ -247,6 +315,9 @@ public class CuesManager {
     }
 
 
+    /**Fades all cues in cue list and pauses the playlist in a given time.
+     * @param duration Time to perform fades
+     */
     public void stop(double duration) {
         for (Cue cue : cues) {
             if(cue.getCueFile()!=null){

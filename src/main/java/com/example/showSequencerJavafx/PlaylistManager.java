@@ -11,6 +11,8 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.*;
 
+/**Class the manage playList PlaylistFiles
+ */
 public class PlaylistManager {
 
     private int playListNumber = -1;
@@ -19,20 +21,33 @@ public class PlaylistManager {
     private final ObservableList<PlaylistFile> playlistFiles = FXCollections.observableArrayList();
     private ChangeListener<Duration> playlistFileProgressListener;
     private final MainController mainController;
+
     public SimpleDoubleProperty progress = new SimpleDoubleProperty(0);
 
+    /**Constructor for playlist manager. Sets main controller variable.
+     * @param mainController Main controller for GUI.
+     */
     public PlaylistManager(MainController mainController){
         this.mainController = mainController;
     }
 
+    /**Getter for playlist file list
+     * @return Observable list of playlistFiles in playlist.
+     */
     public ObservableList<PlaylistFile> getPlaylistFiles() {
         return playlistFiles;
     }
 
+    /**Getter for playlist directory
+     * @return Directory containing playlist media files
+     */
     public File getPlaylistDirectory() {
         return playlistDirectory;
     }
 
+    /**Sets volume for all playlistFiles in playlist
+     * @param volume Volume to set (0-100)
+     */
     public void setCurrentVolume(double volume) {
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getPlayer().getFadeProgress().get()==1){
@@ -41,11 +56,17 @@ public class PlaylistManager {
         }
     }
 
+    /**Sets playlist volume and passes value to initial volume if not already populated.
+     * @param volume Volume to set playlist to.
+     */
     public void setVolume(double volume) {
         if(initVolume<0) initVolume = mainController.playlistVolumeSlider.getValue();
         mainController.playlistVolumeSlider.setValue(volume);
     }
 
+    /**
+     * Sets playlist slider to initial volume and sets initial volume to -1.
+     */
     public void resetVolume() {
         if(initVolume>=0) {
             mainController.playlistVolumeSlider.setValue(initVolume);
@@ -53,6 +74,9 @@ public class PlaylistManager {
         }
     }
 
+    /**
+     * Pauses playing playlistFile for seeking.
+     */
     public void seekStart() {
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getPlayer().getStatus().equals(MediaPlayer.Status.PLAYING)){
@@ -61,6 +85,9 @@ public class PlaylistManager {
         }
     }
 
+    /**Seeks playing playlistFile to seekPercentage.
+     * @param seekPercentage Percentage to seek playlistFile to.
+     */
     public void seek(double seekPercentage) {
         Optional<PlaylistFile> current = playlistFiles.stream().filter(x->x.getState().equals(PlaylistFile.STATE.PLAYING)||x.getState().equals(PlaylistFile.STATE.PAUSED)).findFirst();
         if (current.isEmpty()) return;
@@ -70,6 +97,9 @@ public class PlaylistManager {
         current.get().getPlayer().seek(seekTime);
     }
 
+    /**
+     * Plays playlistFile that is paused for seeking.
+     */
     public void seekEnd() {
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(States.STATE.PLAYING)){
@@ -78,6 +108,10 @@ public class PlaylistManager {
         }
     }
 
+    /**Plays the playlistFile in for the current playlistNumber and binds progress to
+     * GUI elements. Stops all other playlistFiles.
+     * @param duration Duration for playlistFile to fade up.
+     */
     private void initiateTrack(double duration){
         mainController.assertValidFiles();
 
@@ -106,12 +140,21 @@ public class PlaylistManager {
         currentFile.getPlayer().currentTimeProperty().addListener(playlistFileProgressListener);
     }
 
+    /**PlaylistNumber is set to index of selectedItem. Then current initiate track is run.
+     * @param selectedItem PlaylistFile to jump to.
+     * @param duration Duration of fade up.
+     */
     public void jumpTo(PlaylistFile selectedItem, double duration) {
         playListNumber = playlistFiles.indexOf(selectedItem);
         initiateTrack(duration);
     }
 
 
+    /**If any playlistFiles are playing, pause is run. If any playlist files are paused play is run.
+     * Otherwise, if playlistNumber not -1 current playlistFile is initiated. If playlistNumber is -1
+     * next track is run to start playlist.
+     * @param duration Duration for paused/playing playlistFiles to fade up/down.
+     */
     public void pausePlay(double duration){
         if(playlistFiles.stream().anyMatch(x->x.getState().equals(States.STATE.PLAYING))){
             pause(duration);
@@ -125,6 +168,9 @@ public class PlaylistManager {
     }
 
 
+    /**Plays any paused playlistFiles.
+     * @param duration Duration for paused playlistFiles to fade up.
+     */
     public void play(double duration){
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(PlaylistFile.STATE.PAUSED)) {
@@ -134,10 +180,17 @@ public class PlaylistManager {
         }
     }
 
+    /**Default call for pause. Passes empty runnable to pause
+     * @param duration Duration for playing playlistFiles to fade down.
+     */
     public void pause(double duration){
         pause(duration, ()->{});
     }
 
+    /**Pauses all playing playlistFiles
+     * @param duration Duration for playing playlistFiles to fade down.
+     * @param onFinished Runnable to run when pause is complete.
+     */
     public void pause(double duration, Runnable onFinished){
         for(PlaylistFile playlistFile : playlistFiles){
             if(playlistFile.getState().equals(PlaylistFile.STATE.PLAYING)) {
@@ -147,10 +200,17 @@ public class PlaylistManager {
         }
     }
 
+    /**Default call for stop. Passes empty runnable to stop
+     * @param duration Duration for playing playlistFiles to fade down.
+     */
     public void stop(double duration){
         stop(duration, ()->{});
     }
 
+    /**Stops all playlistFiles and resets the progress indicators in the GUI.
+     * @param duration Duration for playing playlistFiles to fade down.
+     * @param onFinished Runnable to run when stop is complete
+     */
     public void stop(double duration, Runnable onFinished){
         if(playlistFiles.stream().noneMatch(x->x.getState().equals(States.STATE.PLAYING)||x.getState().equals(States.STATE.PAUSED))) return;
 
@@ -173,6 +233,11 @@ public class PlaylistManager {
     }
 
 
+    /**Increments playlist number. Stops the current playlistFile and initiates the
+     * next playlistFile.
+     * @param duration Duration for current playlistFile to fade down and next
+     *                 playlistFile to fade up.
+     */
     void nextTrack(double duration){
         if(mainController.getPlaylistTable().getItems().isEmpty()) return;
 
@@ -189,6 +254,11 @@ public class PlaylistManager {
         initiateTrack(duration);
     }
 
+    /**Decrements the playlist number. Stops the current playlistFile and initiates the
+     * previous playlistFile.
+     * @param duration Duration for previous playlistFile to fade up and
+     *                 current playlistFile to fade down.
+     */
     void prevTrack(double duration){
         if(mainController.getPlaylistTable().getItems().isEmpty()) return;
 
@@ -207,6 +277,10 @@ public class PlaylistManager {
     }
 
 
+    /**Fills the playlist table and playlistFile list with new media players generated
+     * from files in the selected directory.
+     * @param selectedDirectory Directory of playlist media files
+     */
     void setDirectory(File selectedDirectory){
 
         playlistDirectory = selectedDirectory;
@@ -218,7 +292,7 @@ public class PlaylistManager {
 
         int i = 1;
         for (File musicFile : musicFiles) {
-            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false, musicFile.getAbsolutePath(), Paths.get(musicFile.getAbsolutePath()).toUri(), mainController.getPlaylistTable(), mainController, mainController.playlistVolumeSlider);
+            PlaylistFile newFile = new PlaylistFile(musicFile.getName(), i, false,  Paths.get(musicFile.getAbsolutePath()).toUri(), mainController.getPlaylistTable(), mainController, mainController.playlistVolumeSlider);
 
             newFile.getPlayer().setOnEndOfMedia(()->{
                 newFile.getPlayer().getMediaPlayer().stop();
@@ -233,9 +307,10 @@ public class PlaylistManager {
     }
 
 
-
+    /**Randomises the order of the playlistFiles and
+     * sets the contents of the playlistTable accordingly.
+     */
     void shuffle(){
-
         List<PlaylistFile> items = new ArrayList<>(mainController.getPlaylistTable().getItems().stream().toList());
         Collections.shuffle(items);
         int i = 1;

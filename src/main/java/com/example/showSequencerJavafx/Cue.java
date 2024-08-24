@@ -283,7 +283,7 @@ public class Cue implements States{
                     getCueFile().getPlayer().stopFaded(cueVol.get(), mainController.MIN_FADE_TIME, ()->getCueFile().getPlayer().getMediaPlayer().stop());
                 });
 
-                progress.bind(getCueFile().getPlayer().fadeProgressProperty());
+                progress.bind(getCueFile().getPlayer().getFadeProgress());
 
                 getCueFile().getPlayer().playFaded(cueVol.get(), Math.max(cueTime, mainController.MIN_FADE_TIME));
 
@@ -308,7 +308,7 @@ public class Cue implements States{
                 //Create listener to bind fade progress to cue progress
                 //Play the fade
 
-                ExponentialFade fade = new ExponentialFade(false, cueTime,
+                ExponentialFade fade = new ExponentialFade(cueTime,
                                                             mainController.cueListVolumeSlider.getValue(),
                                                             cueVol.get(), "||CUELIST||", mainController);
 
@@ -404,7 +404,7 @@ public class Cue implements States{
                     targetVol = volumeCues.get(volumeCues.size()-1).cueVol.get();
                 }
 
-                ExponentialFade fade = new ExponentialFade(false, cueTime, mainController.cueListVolumeSlider.getValue(),
+                ExponentialFade fade = new ExponentialFade(cueTime, mainController.cueListVolumeSlider.getValue(),
                                                             targetVol, "||CUELIST||", mainController);
 
                 ChangeListener<Number> listener = (Obs, oldValue, newValue)-> mainController.cueListVolumeSlider.setValue((Double) newValue);

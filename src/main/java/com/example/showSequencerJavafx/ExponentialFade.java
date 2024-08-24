@@ -9,18 +9,24 @@ import javafx.beans.value.ChangeListener;
 import javafx.util.Duration;
 
 
+/**Exponential fade class to generate a timeline to fade a value from
+ * one value to another in a given time exponentially.
+ */
 public class ExponentialFade {
 
     String fadeID;
     Timeline timeline = new Timeline();
     SimpleDoubleProperty newVol = new SimpleDoubleProperty();
     SimpleDoubleProperty progress = new SimpleDoubleProperty();
-    boolean forceFinish;
     double startVol;
     double targetVol;
     double duration;
     MainController mainController;
 
+    /**Set the onFinished runnable for the fade including the runnable passed
+     * in to the fade.
+     * @param onFinished Runnable to be run on fade finished
+     */
     public void setOnFinished(Runnable onFinished) {
         timeline.setOnFinished(event-> {
             onFinished.run();
@@ -32,7 +38,16 @@ public class ExponentialFade {
         });
     }
 
-    public ExponentialFade(boolean forceFinish, double duration, double startVol, double targetVol, String fadeID, MainController mainController) {
+    /**Constructor for exponential fade. Sets variables, finds possible previous fade values,
+     * creates timeline with appropriate values to fade exponentially with listener to the fades
+     * progress and a listener to newVol variable.
+     * @param duration Duration of fade.
+     * @param startVol Intended start volume of fade
+     * @param targetVol Intended target volume of fade
+     * @param fadeID Unique ID for each faded object to control interactions
+     * @param mainController Main controller for GUI
+     */
+    public ExponentialFade(double duration, double startVol, double targetVol, String fadeID, MainController mainController) {
 
         this.fadeID = fadeID;
         this.startVol = startVol;
@@ -40,7 +55,6 @@ public class ExponentialFade {
         this.mainController = mainController;
         this.newVol.set(startVol);
         this.progress.set(0.01);
-        this.forceFinish = forceFinish;
         this.duration = duration;
 
         handlePreviousFade();
@@ -57,8 +71,6 @@ public class ExponentialFade {
 
         startVol = Math.max(0.9, startVol);
         targetVol = Math.max(0.9, targetVol);
-
-        //System.out.println(startVol + "-->" + targetVol + ":" + duration + " --- " + this.startVol + "-->" + this.targetVol);
 
         if(duration>0){
             double finalStartVol = startVol;
@@ -81,7 +93,6 @@ public class ExponentialFade {
 
             progress.addListener(listener);
 
-
             double finalTargetVol1 = targetVol;
             KeyFrame removeListener = new KeyFrame(Duration.seconds(duration), event -> {progress.removeListener(listener); newVol.set(finalTargetVol1);});
             timeline.getKeyFrames().add(removeListener);
@@ -95,7 +106,6 @@ public class ExponentialFade {
         }
 
         timeline.setCycleCount(1);
-
     }
 
 
@@ -118,11 +128,17 @@ public class ExponentialFade {
     }
 
 
+    /**Stops the timeline and sets the progress to 0.
+     */
     public void remove(){
         progress.set(0);
         timeline.stop();
     }
 
+    /**Finds start and end vol of any fade of the same ID that may be still
+     * running. Sets the start and end vol of this fade depending on if it is
+     * a grow or fade. Then removes the previous fade.
+     */
     private void handlePreviousFade(){
         ExponentialFade prevFade = mainController.getFades().put(fadeID, this);
         if(prevFade==null) return;

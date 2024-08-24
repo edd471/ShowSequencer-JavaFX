@@ -9,8 +9,15 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
+/**Custom TableRow to show the status of playlistFile or Cue objects in the table.
+ * @param <T> Cue or PlaylistFile object.
+ */
 public class StatusRow<T extends States> extends TableRow<T> {
 
+    /**Run when table row is updated.
+     * @param item Object in the table row
+     * @param empty Empty row if true, false otherwise.
+     */
     @Override
     protected void updateItem(T item, boolean empty) {
         super.updateItem(item, empty);
