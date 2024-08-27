@@ -345,9 +345,6 @@ public class MainController implements Initializable {
         cueListTableFaders.setRowFactory(factory -> new StatusRow<>());
         cueListTableFaders.setStyle("-fx-selection-bar: lightGrey; -fx-focus-color: transparent;");
 
-
-        cueListTableAudio.selectionModelProperty().bindBidirectional(cueListTableFaders.selectionModelProperty());
-
         cueListTableFaders.onScrollToProperty().bindBidirectional(cueListTableAudio.onScrollToProperty());
 
         cueNum.setCellValueFactory(new PropertyValueFactory<>("cueNum"));
@@ -1529,6 +1526,7 @@ public class MainController implements Initializable {
         }
 
         refreshRunScreen();
+        refreshTables();
     }
 
     @FXML
@@ -1618,7 +1616,6 @@ public class MainController implements Initializable {
         for(TablePosition pos : positions){
             cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().set(pos.getColumn(), faderClipBoard);
         }
-        refreshTables();
     }
 
 
@@ -1651,13 +1648,13 @@ public class MainController implements Initializable {
         cuePasteAsNew.setDisable(false);
     }
 
-
     @FXML
     protected void cueListAddCue(){
         cuesManager.addCue();
 
         cueListTableAudio.setItems(cuesManager.getCues());
         cueListTableFaders.setItems(cuesManager.getCues());
+        refreshTables();
     }
 
     @FXML
@@ -1668,9 +1665,8 @@ public class MainController implements Initializable {
             // Iterate over the copy and remove each item from the cues list
             cuesManager.removeCue(selectedCues);
             //Clear the selection after removal
-            cueListTableAudio.getSelectionModel().clearSelection();
+            refreshTables();
         }
-        refreshTables();
     }
 
     @FXML
@@ -1688,7 +1684,7 @@ public class MainController implements Initializable {
 
         cuesManager.next();
         refreshRunScreen();
-
+        refreshTables();
     }
 
     @FXML
@@ -1697,6 +1693,7 @@ public class MainController implements Initializable {
 
         cuesManager.previous();
         refreshRunScreen();
+        refreshTables();
     }
 
 
@@ -1710,6 +1707,7 @@ public class MainController implements Initializable {
         playlistManager.stop(MIN_FADE_TIME);
         setPlaylistControlPanelDisabled(true);
         refreshRunScreen();
+        refreshTables();
     }
 
 

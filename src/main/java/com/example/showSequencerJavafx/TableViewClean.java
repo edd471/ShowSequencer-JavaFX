@@ -5,7 +5,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.control.TableView;
 
 /**
- * @author Craig Day <craigday@gmail.com/>
+ * @author Craig Day craigday@gmail.com
  */
 public class TableViewClean<T> extends TableView<T> {
 

@@ -63,7 +63,6 @@ public class Cue implements States{
         }
 
         setCueFile(cueFile);
-        mainController.refreshTables();
     }
 
 
@@ -87,7 +86,6 @@ public class Cue implements States{
         this.faderValues = new ArrayList<>(cue.faderValues);
 
         setCueFile(cue.cueFile.get());
-        mainController.refreshTables();
     }
 
 
@@ -238,7 +236,6 @@ public class Cue implements States{
      * @param state Playing state of cue*/
     public void setState(STATE state) {
         this.state = state;
-        mainController.refreshTables();
         mainController.refreshRunScreen();
     }
 
@@ -333,12 +330,17 @@ public class Cue implements States{
                 //If the playlist is still fading, fade it and run again once fade is finished
                 //Otherwise, shuffle, bind progress, enable control panel, set volume and play playlist
                 if(playlistManager.progress.get()>0) playlistManager.stop(mainController.MIN_FADE_TIME, ()->run(false));
-                else{
+                else if(!playlistManager.getPlaylistFiles().isEmpty()){
                     playlistManager.shuffle();
                     progress.bind(playlistManager.progress);
                     mainController.setPlaylistControlPanelDisabled(false);
                     playlistManager.setVolume(cueVol.get());
-                    playlistManager.nextTrack(cueTime);
+                    for(int i=0; i<playlistManager.getPlaylistFiles().size(); i++){
+                        if (!playlistManager.getPlaylistFiles().get(i).isExcluded()){
+                            playlistManager.jumpTo(playlistManager.getPlaylistFiles().get(i), cueTime);
+                            return;
+                        }
+                    }
                 }
                 break;
             }
@@ -465,6 +467,8 @@ public class Cue implements States{
                 for(Cue cue : prevCues){
                     if(cue.getCueCommand().equals(MainController.COMMAND.PLAYLIST_CONT) || cue.getCueCommand().equals(MainController.COMMAND.PLAYLIST_START)){
                         playlistCues.add(cue);
+                    }else if(cue.getCueCommand().equals(MainController.COMMAND.PLAYLIST_FADE)){
+                        playlistCues.clear();
                     }
                 }
 

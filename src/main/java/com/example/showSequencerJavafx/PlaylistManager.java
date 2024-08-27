@@ -145,8 +145,10 @@ public class PlaylistManager {
      * @param duration Duration of fade up.
      */
     public void jumpTo(PlaylistFile selectedItem, double duration) {
-        playListNumber = playlistFiles.indexOf(selectedItem);
-        initiateTrack(duration);
+        if(playListNumber!= playlistFiles.indexOf(selectedItem)){
+            playListNumber = playlistFiles.indexOf(selectedItem);
+            initiateTrack(duration);
+        }
     }
 
 
