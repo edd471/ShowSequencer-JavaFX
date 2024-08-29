@@ -291,12 +291,12 @@
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                       <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="62.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="34.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="55.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="NEVER" />
                                     </rowConstraints>
                                     <Label fx:id="lblCurrentCue1" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true">
                                        <GridPane.margin>
@@ -964,7 +964,7 @@
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
-                                 <GridPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="238.0" prefWidth="936.0" VBox.vgrow="ALWAYS">
+                                 <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
                                     <columnConstraints>
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
@@ -984,12 +984,12 @@
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                       <RowConstraints maxHeight="87.0" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="SOMETIMES" />
-                                       <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="SOMETIMES" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="62.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="34.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="55.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
+                                       <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="NEVER" />
                                     </rowConstraints>
                                     <Label fx:id="lblNextCue1" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true">
                                        <GridPane.margin>
@@ -1571,7 +1571,7 @@
                   </bottom>
                   <center>
                      <HBox>
-                        <TableViewClean fx:id="cueListTableAudio" editable="true" prefHeight="510.0" prefWidth="902.0">
+                        <TableViewClean fx:id="cueListTableAudio" editable="true" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="510.0" prefWidth="902.0">
                            <columns>
                               <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" text="Cue Control">
                                  <columns>
@@ -1593,7 +1593,7 @@
                               <Insets bottom="15.0" />
                            </HBox.margin>
                         </TableViewClean>
-                        <TableView fx:id="cueListTableFaders" editable="true" prefHeight="508.0" prefWidth="558.0" HBox.hgrow="ALWAYS">
+                        <TableView fx:id="cueListTableFaders" editable="true" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="508.0" prefWidth="558.0" HBox.hgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="fader1Name" minWidth="0.0" prefWidth="29.0" sortable="false" text="...">
                                  <columns>

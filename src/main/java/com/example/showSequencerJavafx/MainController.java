@@ -138,7 +138,6 @@ public class MainController implements Initializable {
     @FXML
     Slider playlistVolumeSlider;
 
-
     @FXML
     private TableViewClean<Cue> cueListTableAudio;
     @FXML
@@ -240,6 +239,29 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        cueListTableAudio.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+            if (newSkin != null) {
+                ScrollBar verticalScrollBar = (ScrollBar) cueListTableAudio.lookup(".scroll-bar:vertical");
+                if (verticalScrollBar != null) {
+                    verticalScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                        // Refresh the table when scrolling
+                        refreshTables();
+                    });
+                }
+            }
+        });
+        cueListTableFaders.skinProperty().addListener((obs, oldSkin, newSkin) -> {
+            if (newSkin != null) {
+                ScrollBar verticalScrollBar = (ScrollBar) cueListTableFaders.lookup(".scroll-bar:vertical");
+                if (verticalScrollBar != null) {
+                    verticalScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                        // Refresh the table when scrolling
+                        refreshTables();
+                    });
+                }
+            }
+        });
 
         faderColumns = new ArrayList<>(Arrays.asList(fader1, fader2, fader3, fader4, fader5, fader6, fader7, fader8,
                 fader9, fader10, fader11, fader12, fader13, fader14, fader15, fader16, fader17, fader18,
@@ -556,8 +578,19 @@ public class MainController implements Initializable {
 
     }
 
+    private boolean areAllColumnsInView(TableView<?> tableView) {
+        // Calculate the total width of all columns
+        double totalColumnsWidth = 0;
+        for (TableColumn<?, ?> column : tableView.getColumns()) {
+            totalColumnsWidth += column.getWidth();
+        }
 
+        // Get the visible width of the TableView
+        double visibleWidth = tableView.getWidth();
 
+        // Check if all columns are in view
+        return totalColumnsWidth <= visibleWidth;
+    }
 
     private String colorToString(Color color) {
         return String.format("#%02X%02X%02X%02X",
@@ -1405,16 +1438,18 @@ public class MainController implements Initializable {
 
             ArrayList<Double> dBValues = cuesManager.getBacktrackFaderDb(cuesManager.getCurrentCueNum());
             for(int i=0; i < currentFaderValueLabels.size(); i++){
-                currentFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em");
+                currentFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em;");
                 if(dBValues.get(i)==null){
                     currentFaderValueLabels.get(i).setText("");
                 }else if (dBValues.get(i)==-41.0){
                     currentFaderValueLabels.get(i).setText("-∞");
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em; -fx-background-color: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
                 }else{
                     currentFaderValueLabels.get(i).setText(dBValues.get(i).toString());
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em; -fx-background-color: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
                 }
                 if(dBValues.get(i)!=null && currentCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(currentCue.getFaderValues().get(i))){
-                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-text-fill: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
+                    currentFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-background-color: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
                 }
             }
 
@@ -1470,7 +1505,7 @@ public class MainController implements Initializable {
                 nextFaderValueLabels.get(i).setStyle("-fx-font-size: 1.3em");
 
                 if(dBValues.get(i)!=null && nextCue.getFaderValues().get(i)!=null && dBValues.get(i).equals(nextCue.getFaderValues().get(i))){
-                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-text-fill: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
+                    nextFaderValueLabels.get(i).setStyle("-fx-font-weight: bold; -fx-font-size: 1.3em; -fx-background-color: " + dBColorMap.get(dBValues.get(i)).toString().replace("0x", "#") + ";");
                     if(dBValues.get(i)==null){
                         nextFaderValueLabels.get(i).setText("");
                     }else if (dBValues.get(i)==-41.0){
@@ -1570,6 +1605,13 @@ public class MainController implements Initializable {
     //Cue Tab Functions
 
     public void refreshTables(){
+
+        if(areAllColumnsInView(cueListTableFaders)){
+            HBox.setMargin(cueListTableFaders, new Insets(0, 0, 15, 0));
+        }else{
+            HBox.setMargin(cueListTableFaders, new Insets(0, 0, 0, 0));
+        }
+
         cueListTableFaders.refresh();
         cueListTableAudio.refresh();
 
@@ -1603,19 +1645,36 @@ public class MainController implements Initializable {
     private void cueListCopyFader() {
         if (cueListTableFaders.getSelectionModel().getSelectedCells().isEmpty()) return;
         TablePosition<?,?> pos = cueListTableFaders.getSelectionModel().getSelectedCells().get(0);
-        faderClipBoard = cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().get(pos.getColumn());
+        int visibleIndex = 0;
+        for(int i=0; i<=pos.getColumn();){
+            if(cueListTableFaders.getColumns().get(visibleIndex).isVisible()){
+                i++;
+            }
+            visibleIndex++;
+        }
+        faderClipBoard = cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().get(visibleIndex-1);
         faderPaste.setDisable(false);
+        System.out.println(visibleIndex-1);
     }
 
 
     private void cueListPasteFader(){
-        if (cueListTableFaders.getSelectionModel().getSelectedCells().isEmpty() || faderClipBoard == null) return;
+        if (cueListTableFaders.getSelectionModel().getSelectedCells().isEmpty()) return;
 
         ObservableList<TablePosition> positions = cueListTableFaders.getSelectionModel().getSelectedCells();
 
         for(TablePosition pos : positions){
-            cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().set(pos.getColumn(), faderClipBoard);
+            int visibleIndex = 0;
+            for(int i=0; i<=pos.getColumn();){
+                if(cueListTableFaders.getColumns().get(visibleIndex).isVisible()){
+                    i++;
+                }
+                visibleIndex++;
+            }
+            cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().set(visibleIndex-1, faderClipBoard);
+            System.out.println(visibleIndex-1);
         }
+        refreshTables();
     }
 
 
