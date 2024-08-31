@@ -19,6 +19,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -109,6 +110,8 @@ public class MainController implements Initializable {
 
     private ArrayList<Label> nextCueLabels;
 
+    @FXML
+    private GridPane gridPaneCurrentCue;
 
     @FXML
     private Label txtCurrentFaderVal1, txtCurrentFaderVal2, txtCurrentFaderVal3, txtCurrentFaderVal4, txtCurrentFaderVal5, txtCurrentFaderVal6, txtCurrentFaderVal7, txtCurrentFaderVal8, txtCurrentFaderVal9, txtCurrentFaderVal10,
@@ -117,6 +120,9 @@ public class MainController implements Initializable {
             txtCurrentFaderVal31, txtCurrentFaderVal32;
 
     private ArrayList<Label> currentFaderValueLabels;
+
+    @FXML
+    private GridPane gridPaneNextCue;
 
     @FXML
     private Label txtNextFaderVal1, txtNextFaderVal2, txtNextFaderVal3, txtNextFaderVal4, txtNextFaderVal5, txtNextFaderVal6, txtNextFaderVal7, txtNextFaderVal8, txtNextFaderVal9, txtNextFaderVal10,
@@ -288,10 +294,53 @@ public class MainController implements Initializable {
                 txtCurrentFaderVal21, txtCurrentFaderVal22, txtCurrentFaderVal23, txtCurrentFaderVal24, txtCurrentFaderVal25, txtCurrentFaderVal26, txtCurrentFaderVal27, txtCurrentFaderVal28, txtCurrentFaderVal29, txtCurrentFaderVal30,
                 txtCurrentFaderVal31, txtCurrentFaderVal32));
 
+        Rectangle clip = new Rectangle();
+        clip.widthProperty().bind(gridPaneCurrentCue.widthProperty());
+        clip.heightProperty().bind(gridPaneCurrentCue.heightProperty().add(5));
+        gridPaneCurrentCue.setClip(clip);
+
+        for (Node node : currentFaderValueLabels) {
+            // Get the node at the third row and ith column
+            if (node != null) {
+                // Create a clipping rectangle
+                Rectangle clip2 = new Rectangle();
+                // Bind the width of the clip to the width of the grid cell
+                clip2.widthProperty().bind(gridPaneCurrentCue.widthProperty().divide(gridPaneCurrentCue.getColumnCount()));
+                // Set the height of the clip to the height of the grid cell
+                clip2.heightProperty().bind(gridPaneCurrentCue.heightProperty().divide(gridPaneCurrentCue.getRowCount()));
+                // Translate the clip downwards, so it only affects the top portion of the label
+                clip2.setTranslateY(-gridPaneCurrentCue.getHeight() / gridPaneCurrentCue.getRowCount());
+                // Apply the clip to the node (label)
+                node.setClip(clip2);
+            }
+        }
+
         nextFaderValueLabels = new ArrayList<>(Arrays.asList(txtNextFaderVal1, txtNextFaderVal2, txtNextFaderVal3, txtNextFaderVal4, txtNextFaderVal5, txtNextFaderVal6, txtNextFaderVal7, txtNextFaderVal8, txtNextFaderVal9, txtNextFaderVal10,
                 txtNextFaderVal11, txtNextFaderVal12, txtNextFaderVal13, txtNextFaderVal14, txtNextFaderVal15, txtNextFaderVal16, txtNextFaderVal17, txtNextFaderVal18, txtNextFaderVal19, txtNextFaderVal20,
                 txtNextFaderVal21, txtNextFaderVal22, txtNextFaderVal23, txtNextFaderVal24, txtNextFaderVal25, txtNextFaderVal26, txtNextFaderVal27, txtNextFaderVal28, txtNextFaderVal29, txtNextFaderVal30,
                 txtNextFaderVal31, txtNextFaderVal32));
+
+        Rectangle clip3 = new Rectangle();
+        clip3.widthProperty().bind(gridPaneNextCue.widthProperty());
+        clip3.heightProperty().bind(gridPaneNextCue.heightProperty().add(5));
+        gridPaneNextCue.setClip(clip3);
+
+        for (Node node : nextFaderValueLabels) {
+            // Get the node at the third row and ith column
+            if (node != null) {
+                // Create a clipping rectangle
+                Rectangle clip4 = new Rectangle();
+                // Bind the width of the clip to the width of the grid cell
+                clip4.widthProperty().bind(gridPaneNextCue.widthProperty().divide(gridPaneNextCue.getColumnCount()));
+                // Set the height of the clip to the height of the grid cell
+                clip4.heightProperty().bind(gridPaneNextCue.heightProperty().divide(gridPaneNextCue.getRowCount()));
+                // Translate the clip downwards, so it only affects the top portion of the label
+                clip4.setTranslateY(-gridPaneNextCue.getHeight() / gridPaneNextCue.getRowCount());
+                // Apply the clip to the node (label)
+                node.setClip(clip4);
+            }
+        }
+
 
         refreshTables();
         refreshRunScreen();
@@ -714,7 +763,6 @@ public class MainController implements Initializable {
             Element book5 = document.createElement("DB_COLOURS");
             int j = 0;
             for(Color color : dBColorMap.values()){
-                System.out.println(dBColorMap.keySet().toArray()[j].toString());
                 Element command = document.createElement("dBValue_" + dBColorMap.keySet().toArray()[j].toString());
                 command.appendChild(document.createTextNode(colorToString(color)));
                 book5.appendChild(command);
@@ -984,12 +1032,47 @@ public class MainController implements Initializable {
             Document document = builder.parse(selectedFile+"/data.xml");
             document.getDocumentElement().normalize();
 
-            org.w3c.dom.Node sfxNode = document.getElementsByTagName("SFXDirectory").item(0);
-            if(!sfxNode.getTextContent().equals("--None--")) cuesManager.setSFXDirectory(new File(sfxNode.getTextContent()));
+            try{
+                org.w3c.dom.Node sfxNode = document.getElementsByTagName("SFXDirectory").item(0);
+                if(!sfxNode.getTextContent().equals("--None--")) cuesManager.setSFXDirectory(new File(sfxNode.getTextContent()));
+            }catch (Exception e){
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setHeaderText("SFX Files Not Found");
+                alert.setContentText("Please set correct SFX Directory");
 
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.isEmpty()) { // alert is exited, no button has been pressed.
+                    newShow();
+                    return;
+                }
+                else if(result.get() ==  ButtonType.OK) getSFXDirectory(); //oke button is pressed
+                else if(result.get() == ButtonType.CANCEL) { // cancel button is pressed
+                    newShow();
+                    return;
+                }
+            }
 
-            org.w3c.dom.Node playlistNode = document.getElementsByTagName("PlaylistDirectory").item(0);
-            if(!playlistNode.getTextContent().equals("--None--")) playlistManager.setDirectory(new File(playlistNode.getTextContent()));
+            try{
+                org.w3c.dom.Node playlistNode = document.getElementsByTagName("PlaylistDirectory").item(0);
+                if(!playlistNode.getTextContent().equals("--None--")) playlistManager.setDirectory(new File(playlistNode.getTextContent()));
+            }catch (Exception e){
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setHeaderText("Playlist Files Not Found");
+                alert.setContentText("Please set correct Playlist Directory");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.isEmpty()) { // alert is exited, no button has been pressed.
+                    newShow();
+                    return;
+                }
+                else if(result.get() ==  ButtonType.OK) {
+                    getPlaylistDirectory(); //okay button is pressed
+                }
+                else if(result.get() == ButtonType.CANCEL) { // cancel button is pressed
+                    newShow();
+                    return;
+                }
+        }
 
             NodeList excludedNodes = document.getElementsByTagName("ExcludedPlaylistFiles").item(0).getChildNodes();
 
@@ -1654,7 +1737,6 @@ public class MainController implements Initializable {
         }
         faderClipBoard = cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().get(visibleIndex-1);
         faderPaste.setDisable(false);
-        System.out.println(visibleIndex-1);
     }
 
 
@@ -1672,7 +1754,6 @@ public class MainController implements Initializable {
                 visibleIndex++;
             }
             cueListTableFaders.getItems().get(pos.getRow()).getFaderValues().set(visibleIndex-1, faderClipBoard);
-            System.out.println(visibleIndex-1);
         }
         refreshTables();
     }

@@ -271,7 +271,7 @@
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
-                                 <GridPane nodeOrientation="LEFT_TO_RIGHT" prefHeight="238.0" prefWidth="936.0" VBox.vgrow="ALWAYS">
+                                 <GridPane fx:id="gridPaneCurrentCue" nodeOrientation="LEFT_TO_RIGHT" prefHeight="238.0" prefWidth="936.0" VBox.vgrow="ALWAYS">
                                     <columnConstraints>
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
@@ -298,162 +298,162 @@
                                        <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
                                        <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="NEVER" />
                                     </rowConstraints>
-                                    <Label fx:id="lblCurrentCue1" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true">
+                                    <Label fx:id="lblCurrentCue1" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue2" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="1">
+                                    <Label fx:id="lblCurrentCue2" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue3" alignment="BOTTOM_LEFT" layoutX="65.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="2">
+                                    <Label fx:id="lblCurrentCue3" alignment="BOTTOM_LEFT" layoutX="65.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue4" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="3">
+                                    <Label fx:id="lblCurrentCue4" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue5" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="4">
+                                    <Label fx:id="lblCurrentCue5" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue6" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="5">
+                                    <Label fx:id="lblCurrentCue6" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue8" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="7">
+                                    <Label fx:id="lblCurrentCue8" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue13" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="12">
+                                    <Label fx:id="lblCurrentCue13" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue7" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="6">
+                                    <Label fx:id="lblCurrentCue7" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue9" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="8">
+                                    <Label fx:id="lblCurrentCue9" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue10" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="9">
+                                    <Label fx:id="lblCurrentCue10" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue11" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="10">
+                                    <Label fx:id="lblCurrentCue11" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue14" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="13">
+                                    <Label fx:id="lblCurrentCue14" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue15" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="14">
+                                    <Label fx:id="lblCurrentCue15" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue16" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="15">
+                                    <Label fx:id="lblCurrentCue16" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue17" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue17" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue18" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue18" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue19" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue19" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue20" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue20" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue21" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue21" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue22" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue22" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue32" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="15" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue32" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue31" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="14" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue31" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue30" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="13" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue30" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue28" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="11" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue28" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue29" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="12" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue29" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue23" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue23" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue24" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="7" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue24" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue25" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue25" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue26" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="9" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue26" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue27" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="10" GridPane.rowIndex="3">
+                                    <Label fx:id="lblCurrentCue27" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblCurrentCue12" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="11">
+                                    <Label fx:id="lblCurrentCue12" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
@@ -964,7 +964,7 @@
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin>
-                                 <GridPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
+                                 <GridPane fx:id="gridPaneNextCue" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" nodeOrientation="LEFT_TO_RIGHT" VBox.vgrow="ALWAYS">
                                     <columnConstraints>
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
@@ -984,169 +984,169 @@
                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="130.0" minWidth="10.0" prefWidth="100.0" />
                                     </columnConstraints>
                                     <rowConstraints>
-                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="62.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="62.0" vgrow="SOMETIMES" />
                                        <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
                                        <RowConstraints maxHeight="85.0" minHeight="10.0" prefHeight="34.0" vgrow="NEVER" />
-                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="55.0" vgrow="ALWAYS" />
+                                       <RowConstraints maxHeight="1.7976931348623157E308" minHeight="10.0" prefHeight="55.0" vgrow="SOMETIMES" />
                                        <RowConstraints maxHeight="94.0" minHeight="10.0" prefHeight="27.0" vgrow="NEVER" />
                                        <RowConstraints maxHeight="75.0" minHeight="10.0" prefHeight="31.0" vgrow="NEVER" />
                                     </rowConstraints>
-                                    <Label fx:id="lblNextCue1" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true">
+                                    <Label fx:id="lblNextCue1" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue2" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="1">
+                                    <Label fx:id="lblNextCue2" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue3" alignment="BOTTOM_LEFT" layoutX="65.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="2">
+                                    <Label fx:id="lblNextCue3" alignment="BOTTOM_LEFT" layoutX="65.0" layoutY="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue4" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="3">
+                                    <Label fx:id="lblNextCue4" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue5" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="4">
+                                    <Label fx:id="lblNextCue5" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue6" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="5">
+                                    <Label fx:id="lblNextCue6" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue8" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="7">
+                                    <Label fx:id="lblNextCue8" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue13" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="12">
+                                    <Label fx:id="lblNextCue13" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue7" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="6">
+                                    <Label fx:id="lblNextCue7" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue9" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="8">
+                                    <Label fx:id="lblNextCue9" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue10" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="9">
+                                    <Label fx:id="lblNextCue10" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue11" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="10">
+                                    <Label fx:id="lblNextCue11" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue14" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="13">
+                                    <Label fx:id="lblNextCue14" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue15" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="14">
+                                    <Label fx:id="lblNextCue15" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue16" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="15">
+                                    <Label fx:id="lblNextCue16" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue17" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue17" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue18" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue18" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue19" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue19" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue20" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue20" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue21" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="4" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue21" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue22" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="5" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue22" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue32" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="15" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue32" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="15" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue31" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="14" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue31" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="14" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue30" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="13" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue30" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="13" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue28" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="11" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue28" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue29" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="12" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue29" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="12" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue23" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="6" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue23" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue24" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="7" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue24" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue25" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue25" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue26" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="9" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue26" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue27" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="10" GridPane.rowIndex="3">
+                                    <Label fx:id="lblNextCue27" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.rowIndex="3" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
                                     </Label>
-                                    <Label fx:id="lblNextCue12" alignment="BOTTOM_LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" rotate="-45.0" translateY="-10.0" wrapText="true" GridPane.columnIndex="11">
+                                    <Label fx:id="lblNextCue12" alignment="BOTTOM_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="40.0" prefWidth="200.0" rotate="-45.0" translateX="60.0" translateY="-65.0" wrapText="true" GridPane.columnIndex="11" GridPane.halignment="CENTER" GridPane.hgrow="NEVER" GridPane.valignment="BOTTOM" GridPane.vgrow="NEVER">
                                        <GridPane.margin>
                                           <Insets />
                                        </GridPane.margin>
@@ -1570,7 +1570,7 @@
                      </HBox>
                   </bottom>
                   <center>
-                     <HBox>
+                     <HBox fx:id="hBoxCueTables">
                         <TableViewClean fx:id="cueListTableAudio" editable="true" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="510.0" prefWidth="902.0">
                            <columns>
                               <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" text="Cue Control">
