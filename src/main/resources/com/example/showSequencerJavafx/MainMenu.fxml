@@ -1571,7 +1571,7 @@
                   </bottom>
                   <center>
                      <HBox fx:id="hBoxCueTables">
-                        <TableViewClean fx:id="cueListTableAudio" editable="true" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="510.0" prefWidth="902.0">
+                        <TableViewClean fx:id="cueListTableAudio" editable="true" fixedCellSize="30.0" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="510.0" prefWidth="902.0">
                            <columns>
                               <TableColumn maxWidth="1.7976931348623157E308" minWidth="-1.0" prefWidth="-1.0" text="Cue Control">
                                  <columns>
@@ -1593,7 +1593,7 @@
                               <Insets bottom="15.0" />
                            </HBox.margin>
                         </TableViewClean>
-                        <TableView fx:id="cueListTableFaders" editable="true" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="508.0" prefWidth="558.0" HBox.hgrow="ALWAYS">
+                        <TableView fx:id="cueListTableFaders" editable="true" fixedCellSize="30.0" onScroll="#refreshTables" onScrollFinished="#refreshTables" onScrollStarted="#refreshTables" onScrollTo="#refreshTables" onScrollToColumn="#refreshTables" prefHeight="508.0" prefWidth="558.0" HBox.hgrow="ALWAYS">
                            <columns>
                               <TableColumn fx:id="fader1Name" minWidth="0.0" prefWidth="29.0" sortable="false" text="...">
                                  <columns>
