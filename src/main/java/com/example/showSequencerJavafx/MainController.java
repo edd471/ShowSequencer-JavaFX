@@ -20,7 +20,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -421,14 +420,17 @@ public class MainController implements Initializable {
 
         cueNum.setCellValueFactory(new PropertyValueFactory<>("cueNum"));
         cueNum.setCellFactory(col -> EditCell.createStringEditCell("cueNum"));
+        cueNum.setStyle("-fx-font-size: 14; -fx-font-weight: bold");
         cueNum.setOnEditCommit(event-> {
             Cue cue = event.getRowValue();
+            if(cue==null){return;}
             cue.setCueNum(event.getNewValue());
         });
         cueName.setCellValueFactory(new PropertyValueFactory<>("cueName"));
         cueName.setCellFactory(col -> EditCell.createStringEditCell("cueName"));
         cueName.setOnEditCommit(event-> {
             Cue cue = event.getRowValue();
+            if(cue==null){return;}
             cue.setCueName(event.getNewValue());
         });
 
@@ -563,6 +565,7 @@ public class MainController implements Initializable {
                     else return Double.parseDouble(s);
                 }
             }, doubleList));
+            col.setStyle("-fx-font-size: 14.2");
             col.setOnEditCommit(event-> {
                 Cue cue = event.getRowValue();
                 cue.getFaderValues().set(faderColumns.indexOf(col), event.getNewValue());
