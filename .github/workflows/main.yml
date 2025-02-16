@@ -1,0 +1,43 @@
+name: Build and Package with jpackage
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: ubuntu-latest  # Change to macos-latest or windows-latest if needed
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build the project
+        run: |
+           mvn package   
+
+      - name: Run jpackage
+        run: |
+          jpackage \
+            --input build/libs/ \ # Adjust based on your build output location
+            --name MyApp \
+            --main-jar myapp.jar \
+            --type app-image \
+            --dest output/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: packaged-app
+          path: output/*
