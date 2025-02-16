@@ -11,7 +11,7 @@ on:
 
 jobs:
   package:
-    runs-on: ubuntu-latest  # Change to macos-latest or windows-latest if needed
+    runs-on: windows-latest  # Change to macos-latest or windows-latest if needed
     
     steps:
       - name: Checkout repository
