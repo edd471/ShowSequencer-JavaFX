@@ -29,12 +29,7 @@ jobs:
 
       - name: Run jpackage
         run: |
-          jpackage \
-            --input build/libs/ \ # Adjust based on your build output location
-            --name MyApp \
-            --main-jar myapp.jar \
-            --type app-image \
-            --dest output/
+          jpackage -t msi --name "ShowSequencer" --input out/artifacts/ShowSequencer_JavaFX_jar/  --main-jar .\ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "C:\Program Files\JavaFX\javafx-jmods-22.0.1" --add-modules javafx.controls,javafx.media,javafx.fxml --icon .\icon.ico
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
