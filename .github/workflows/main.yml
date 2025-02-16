@@ -29,7 +29,7 @@ jobs:
 
       - name: Run jpackage
         run: |
-          jpackage -t msi --name "ShowSequencer" --input out/artifacts/ShowSequencer_JavaFX_jar/  --main-jar .\ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "C:\Program Files\JavaFX\javafx-jmods-22.0.1" --add-modules javafx.controls,javafx.media,javafx.fxml --icon .\icon.ico
+          jpackage -t msi --name "ShowSequencer" --input out\artifacts\ShowSequencer_JavaFX_jar\  --main-jar .\ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "C:\Program Files\JavaFX\javafx-jmods-22.0.1" --add-modules javafx.controls,javafx.media,javafx.fxml --icon out\artifacts\ShowSequencer_JavaFX_jar\icon.ico
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
