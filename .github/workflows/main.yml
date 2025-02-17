@@ -25,21 +25,9 @@ jobs:
           Expand-Archive -Path javafx-sdk.zip -DestinationPath .
           echo "JAVA_FX_PATH=$(pwd)\javafx-sdk-22.0.1\lib" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
 
-      - name: Build the project
-        run: |
-          mkdir -p out/artifacts/ShowSequencer_JavaFX_jar
-          mvn clean package
-          cp target/*.jar out/artifacts/ShowSequencer_JavaFX_jar/ShowSequencer-JavaFX.jar
-
       - name: Run jpackage
         run: |
           jpackage -t msi --name "ShowSequencer" --input out/artifacts/ShowSequencer_JavaFX_jar/ --main-jar ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml --icon src/main/resources/icon.ico --dest output/
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: packaged-app
-          path: output/*
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
