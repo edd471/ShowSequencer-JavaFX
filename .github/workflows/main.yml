@@ -8,9 +8,7 @@ on:
 jobs:
   package:
     runs-on: windows-latest  # Change to macos-latest or windows-latest if needed
-    permissions: 
-      contents: write
-      
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -29,11 +27,13 @@ jobs:
 
       - name: Build the project
         run: |
-          mvn package   
+          mkdir -p out/artifacts/ShowSequencer_JavaFX_jar
+          mvn clean package
+          cp target/*.jar out/artifacts/ShowSequencer_JavaFX_jar/ShowSequencer-JavaFX.jar
 
       - name: Run jpackage
         run: |
-          jpackage -t msi --name "ShowSequencer" --input out\artifacts\ShowSequencer_JavaFX_jar\  --main-jar .\ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml --icon src\icon.ico --dest output\
+          jpackage -t msi --name "ShowSequencer" --input out/artifacts/ShowSequencer_JavaFX_jar/ --main-jar ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml --icon src/main/resources/icon.ico --dest output/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -49,4 +49,3 @@ jobs:
           draft: false
           prerelease: false
           files: output/*
-
