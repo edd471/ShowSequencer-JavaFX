@@ -12,7 +12,9 @@ on:
 jobs:
   package:
     runs-on: windows-latest  # Change to macos-latest or windows-latest if needed
-    
+    permissions: 
+      contents: write
+      
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
