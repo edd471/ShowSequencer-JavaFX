@@ -32,11 +32,11 @@ jobs:
         run: |
           jpackage -t msi --name "ShowSequencer" \
             --input out/artifacts/ShowSequencer_JavaFX_jar/ \
-            --main-jar ShowSequencer-JavaFX.jar \
+            --main-jar ./ShowSequencer-JavaFX.jar \
             --main-class com.example.showSequencerJavafx.ShowSequencer \
             --win-menu --win-shortcut \
-            --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml \
-            --runtime-image "$JAVA_HOME" \ 
+            --module-path "$env:JAVA_FX_PATH" \
+            --add-modules javafx.controls,javafx.media,javafx.fxml \
             --icon src/main/resources/icon.ico \
             --dest output/
             
