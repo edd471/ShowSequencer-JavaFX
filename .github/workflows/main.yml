@@ -7,8 +7,10 @@ on:
 
 jobs:
   package:
-    runs-on: windows-latest
 
+    runs-on: windows-latest  # Set to `macos-latest` or `ubuntu-latest` if needed
+    
+    
     permissions:
       contents: write
     
@@ -28,12 +30,13 @@ jobs:
           Expand-Archive -Path javafx-sdk.zip -DestinationPath .
           echo "JAVA_FX_PATH=$(pwd)\javafx-sdk-22.0.1\lib" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
 
-      - name: Create Output Directory
+
+      - name: Create Output Directories
         run: |
           New-Item -ItemType Directory -Path out/artifacts/ShowSequencer_JavaFX_jar -Force
           New-Item -ItemType Directory -Path out/classes -Force
 
-      - name: Build JAR
+      - name: Compile Java Source Files
         run: |
           javac --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml -d out/classes $(Get-ChildItem -Path src/main/java/com/example/showSequencerJavafx/ -Filter *.java | ForEach-Object { $_.FullName })
           jar cf out/artifacts/ShowSequencer_JavaFX_jar/ShowSequencer-JavaFX.jar -C out/classes .
@@ -54,7 +57,8 @@ jobs:
             --win-menu --win-shortcut `
             --runtime-image "$env:RUNTIME_PATH" `
             --icon src/main/resources/icon.ico `
-            --dest output/
+            --dest output/ `
+            --add-modules javafx.controls,javafx.media,javafx.fxml
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
