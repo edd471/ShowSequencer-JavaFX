@@ -28,35 +28,11 @@ jobs:
           Expand-Archive -Path javafx-sdk.zip -DestinationPath .
           echo "JAVA_FX_PATH=$(pwd)\javafx-sdk-22.0.1\lib" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
 
+      - name: Create Output Directory
+        run: |
+          New-Item -ItemType Directory -Path out/artifacts/ShowSequencer_JavaFX_jar -Force
+
       - name: Build JAR
         run: |
-          mkdir -p out/artifacts/ShowSequencer_JavaFX_jar
           javac --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml -d out/classes src/main/java/com/example/showSequencerJavafx/*.java
-          jar cf out/artifacts/ShowSequencer_JavaFX_jar/ShowSequencer-JavaFX.jar -C out/classes .
-
-      - name: Create Custom JDK Runtime with JavaFX
-        run: |
-          jlink --module-path "$env:JAVA_HOME\jmods;$env:JAVA_FX_PATH" `
-                --add-modules java.base,java.desktop,javafx.controls,javafx.media,javafx.fxml `
-                --output custom-runtime
-          echo "RUNTIME_PATH=$(pwd)\custom-runtime" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
-
-      - name: Run jpackage
-        run: |
-          jpackage -t msi --name "ShowSequencer" `
-            --input out/artifacts/ShowSequencer_JavaFX_jar/ `
-            --main-jar ShowSequencer-JavaFX.jar `
-            --main-class com.example.showSequencerJavafx.ShowSequencer `
-            --win-menu --win-shortcut `
-            --runtime-image "$env:RUNTIME_PATH" `
-            --icon src/main/resources/icon.ico `
-            --dest output/
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
-          draft: false
-          prerelease: false
-          files: output/*
+          jar cf out/artifact
