@@ -7,8 +7,10 @@ on:
 
 jobs:
   package:
-    runs-on: windows-latest  # Set to `macos-latest` or `ubuntu-latest` if needed
 
+    runs-on: windows-latest  # Set to `macos-latest` or `ubuntu-latest` if needed
+    
+    
     permissions:
       contents: write
     
@@ -27,6 +29,7 @@ jobs:
           Invoke-WebRequest -Uri "https://download2.gluonhq.com/openjfx/22.0.1/openjfx-22.0.1_windows-x64_bin-sdk.zip" -OutFile "javafx-sdk.zip"
           Expand-Archive -Path javafx-sdk.zip -DestinationPath .
           echo "JAVA_FX_PATH=$(pwd)\javafx-sdk-22.0.1\lib" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+
 
       - name: Create Output Directories
         run: |
