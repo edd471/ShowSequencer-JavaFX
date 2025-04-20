@@ -131,8 +131,8 @@ public class PreferencesController implements Initializable {
         devices = FXCollections.observableList(Arrays.stream(MidiSystem.getMidiDeviceInfo()).filter(toRemove::contains).toList());
         comboBoxMidiDevice.setItems(devices);
 
-        if(faderManager.getDevice()!=null){
-            comboBoxMidiDevice.getSelectionModel().select(faderManager.getDevice().getDeviceInfo());
+        if(faderManager.getReceiverDevice()!=null){
+            comboBoxMidiDevice.getSelectionModel().select(faderManager.getReceiverDevice().getDeviceInfo());
             midiDeviceChosen();
         }
 
@@ -194,7 +194,7 @@ public class PreferencesController implements Initializable {
     @FXML
     protected void midiDeviceChosen(){
         try {
-            faderManager.setDevice(MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem()));
+            faderManager.setReceiverDevice(MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem()));
             device = MidiSystem.getMidiDevice(comboBoxMidiDevice.getSelectionModel().getSelectedItem());
             faderConfigTable.refresh();
 

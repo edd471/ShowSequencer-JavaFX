@@ -153,9 +153,7 @@ public class CuesManager {
      */
     public void copyCues(ObservableList<Cue> selectedItems) {
         cueClipboard.clear();
-        System.out.println(selectedItems.size());
         for(Cue cue : selectedItems){
-            System.out.println("DONE");
             getCueClipboard().add(new Cue(cue));
         }
     }
@@ -165,7 +163,6 @@ public class CuesManager {
     public void addCue() {
         Cue newCue = new Cue("0.0", "", -1, MainController.COMMAND.NONE, null,
                       75, 0, mainController.getCueAudioTable(), mainController);
-        System.out.println(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex());
         if(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()>=0){
             cues.add(mainController.getCueAudioTable().getSelectionModel().getSelectedIndex()+1,newCue);
         } else {

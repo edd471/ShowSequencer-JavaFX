@@ -20,6 +20,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -31,9 +32,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,9 +64,9 @@ public class MainController implements Initializable {
     private Node[][] displayedCuesNodes = new Node[7][4];
     private final Map<ReadOnlyObjectProperty<Duration>, ChangeListener<Duration>> displayListeners = new HashMap<>(){};
     private boolean playlistControlPanelDisabled = true;
-    private final FaderManager faderManager = new FaderManager();
     private final PlaylistManager playlistManager = new PlaylistManager(this);
     private final CuesManager cuesManager = new CuesManager(this);
+    private FaderManager faderManager;
 
     public enum COMMAND{ NONE, PLAY, STOP, VOLUME, STOP_ALL, PLAYLIST_START, PLAYLIST_CONT, PLAYLIST_FADE }
 
@@ -198,6 +197,8 @@ public class MainController implements Initializable {
     Label playlistTotalDuration;
     @FXML
     Label playlistCurrentDuration;
+    @FXML
+    Shape statusCircle;
 
 
     private final MenuItem cueInsert = new MenuItem("Add Cue");
@@ -245,6 +246,8 @@ public class MainController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        faderManager = new FaderManager(statusCircle);
 
         cueListTableAudio.skinProperty().addListener((obs, oldSkin, newSkin) -> {
             if (newSkin != null) {
@@ -595,8 +598,6 @@ public class MainController implements Initializable {
             }
         });
 
-
-
         cueInsert.setOnAction(event -> cueListAddCue());
         cueDelete.setOnAction(event -> cueListRemoveCue());
         cueCopy.setOnAction(event -> cueListCopyCue());
@@ -629,6 +630,11 @@ public class MainController implements Initializable {
             Platform.runLater(()->openShow(new File(currentProjectDir)));
         }
 
+    }
+
+    @FXML
+    protected void refreshUSB(){
+        faderManager.reconnect();
     }
 
     private boolean areAllColumnsInView(TableView<?> tableView) {
@@ -693,7 +699,7 @@ public class MainController implements Initializable {
 
         faderManager.setFaderList(new ArrayList<>(preferences.tempFaderList));
 
-        faderManager.setDevice(preferences.device);
+        faderManager.setReceiverDevice(preferences.device);
         for(int i=0; i < faderNameColumns.size(); i++){
             if(faderManager.getFaderList().get(i).getName().isEmpty()){
                 faderNameColumns.get(i).setText("...");
@@ -802,8 +808,8 @@ public class MainController implements Initializable {
             }
 
             Element book7 = document.createElement("MidiDevice");
-            if(faderManager.getDevice()!=null){
-                book7.appendChild(document.createTextNode(faderManager.getDevice().getDeviceInfo().toString()));
+            if(faderManager.getReceiverDevice()!=null){
+                book7.appendChild(document.createTextNode(faderManager.getReceiverDevice().getDeviceInfo().toString()));
             }else{
                 book7.appendChild(document.createTextNode("null"));
             }
@@ -893,7 +899,7 @@ public class MainController implements Initializable {
         boolean found = false;
         for(MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()){
             if(info.toString().equals(document.getElementsByTagName("MidiDevice").item(0).getTextContent()) && MidiSystem.getMidiDevice(info).getMaxTransmitters() == 0){
-                faderManager.setDevice(MidiSystem.getMidiDevice(info));
+                faderManager.setReceiverDevice(MidiSystem.getMidiDevice(info));
                 found = true;
             }
         }
@@ -903,7 +909,7 @@ public class MainController implements Initializable {
             alert.setHeaderText("Midi Device Not Found");
             alert.showAndWait();
 
-            faderManager.setDevice(null);
+            faderManager.setReceiverDevice(null);
         }
 
         for(int i=0; i < faderNameColumns.size(); i++){
@@ -916,6 +922,7 @@ public class MainController implements Initializable {
         }
 
     }
+
 
 
     @FXML

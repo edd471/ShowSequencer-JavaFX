@@ -1,5 +1,6 @@
 package com.example.showSequencerJavafx;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 
@@ -142,12 +143,13 @@ public class Fader {
 
             device.getReceiver().send(msg, -1);
 
-
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Error Sending Midi Command");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setHeaderText("Error Sending Midi Command");
+                alert.setContentText(e.getLocalizedMessage());
+                alert.showAndWait();
+            });
         }
 
     }
