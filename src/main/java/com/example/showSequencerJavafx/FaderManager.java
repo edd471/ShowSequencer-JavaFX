@@ -67,6 +67,9 @@ public class FaderManager {
         if (this.receiverDevice != null) {
             this.receiverDevice.close();
         }
+        if (this.transmitterDevice != null) {
+            this.transmitterDevice.close();
+        }
         try{
             this.receiverDevice = receiverDevice;
             this.receiverDevice.open();
@@ -84,6 +87,7 @@ public class FaderManager {
                 }
             }
 
+            this.transmitterDevice.open();
             midiAlivePing = new MidiAlivePing(statusCircle ,this);
             midiAlivePing.start();
 

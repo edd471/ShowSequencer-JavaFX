@@ -7,6 +7,10 @@ public class IdentityResponseListener implements Receiver {
     private boolean received = false;
     private SysexMessage lastMessage = null;
 
+    public IdentityResponseListener(){
+
+    }
+
     @Override
     public void send(MidiMessage message, long timeStamp) {
         if (message instanceof SysexMessage sysex) {

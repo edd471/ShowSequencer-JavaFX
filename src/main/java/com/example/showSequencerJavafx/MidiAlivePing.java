@@ -3,9 +3,7 @@ import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiSystem;
-import javax.sound.midi.SysexMessage;
+import javax.sound.midi.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -19,10 +17,11 @@ public class MidiAlivePing {
     private final FaderManager faderManager;
     private final Shape statusCircle;
     private final ScheduledExecutorService usbStatus;
+    private Transmitter transmitter;
 
     AtomicBoolean usbConnected = new AtomicBoolean(false);
     AtomicReference<MidiDevice.Info> lastConnected = new AtomicReference<>(null);
-    IdentityResponseListener identityListener = new IdentityResponseListener();
+    IdentityResponseListener identityListener;
 
     public MidiAlivePing(Shape statusCircle, FaderManager faderManager) {
         this.faderManager = faderManager;
@@ -34,7 +33,10 @@ public class MidiAlivePing {
 
     }
 
-    public void start(){
+    public void start() throws MidiUnavailableException {
+        identityListener = new IdentityResponseListener();
+        transmitter = transmitDevice.getTransmitter();
+        transmitter.setReceiver(identityListener);
         usbStatus.scheduleAtFixedRate(() -> {
             try {
                 if (receiverDevice == null){
@@ -50,13 +52,10 @@ public class MidiAlivePing {
                     // Reset listener before sending
                     identityListener.reset();
 
-                    transmitDevice.getTransmitter().setReceiver(identityListener);
 
                     // Send Identity Request
                     byte[] identityRequest = new byte[] {
                             (byte) 0xF0, 0x43, 0x30, 0x3E, 0x12, 0x01, 0x02, 0x2E, 0x00, 0x00, 0x00, 0x00, (byte) 0xF7
-                            //(byte) 0xF0, 0x43, 0x30, 0x3E, 0x4C, 0x00, 0x00, 0x7F, 0x00, 0x00, 0x00, 0x08, 0x74, (byte) 0xF7
-
                     };
                     SysexMessage request = new SysexMessage();
                     request.setMessage(identityRequest, identityRequest.length);
