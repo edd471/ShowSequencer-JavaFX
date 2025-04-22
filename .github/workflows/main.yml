@@ -33,7 +33,7 @@ jobs:
         copy target\*.jar dist\ShowSequencer-JavaFX.jar
 
     - name: Copy icon to dist
-      run: copy icon.ico dist\icon.ico
+      run: copy src\icon.ico dist\icon.ico
 
     - name: Package MSI using jpackage
       run: |
