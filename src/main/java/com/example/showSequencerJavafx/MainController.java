@@ -64,9 +64,10 @@ public class MainController implements Initializable {
     private Node[][] displayedCuesNodes = new Node[7][4];
     private final Map<ReadOnlyObjectProperty<Duration>, ChangeListener<Duration>> displayListeners = new HashMap<>(){};
     private boolean playlistControlPanelDisabled = true;
+    private final FaderManager faderManager = new FaderManager();
     private final PlaylistManager playlistManager = new PlaylistManager(this);
     private final CuesManager cuesManager = new CuesManager(this);
-    private FaderManager faderManager;
+
 
     public enum COMMAND{ NONE, PLAY, STOP, VOLUME, STOP_ALL, PLAYLIST_START, PLAYLIST_CONT, PLAYLIST_FADE }
 
@@ -247,7 +248,7 @@ public class MainController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        faderManager = new FaderManager(statusCircle);
+        faderManager.setStatusCircle(statusCircle);
 
         cueListTableAudio.skinProperty().addListener((obs, oldSkin, newSkin) -> {
             if (newSkin != null) {
@@ -990,6 +991,7 @@ public class MainController implements Initializable {
     @FXML
     protected void close(){
         saveShow();
+        faderManager.disconnect();
         ShowSequencer.getStage().close();
     }
 
@@ -1003,7 +1005,7 @@ public class MainController implements Initializable {
     private void newShow(){
 
         preferences.remove("ProjectFile");
-
+        faderManager.disconnect();
         ShowSequencer.getStage().close();
 
         Platform.runLater( () -> {
@@ -1013,6 +1015,7 @@ public class MainController implements Initializable {
                 close();
             }
         } );
+
 
     }
 
