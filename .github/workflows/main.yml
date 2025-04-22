@@ -19,6 +19,9 @@ jobs:
         distribution: 'temurin'
         java-version: '21'
 
+    - name: Fetch full git history for tagging
+      run: git fetch --prune --unshallow
+
     - name: Build JAR with Maven
       run: mvn clean package -DskipTests
 
@@ -27,13 +30,11 @@ jobs:
         curl -L -o javafx.zip https://download2.gluonhq.com/openjfx/22.0.1/openjfx-22.0.1_windows-x64_bin-jmods.zip
         unzip javafx.zip -d javafx-jmods
 
-    - name: Copy JAR to root with desired name
+    - name: Prepare dist directory
       run: |
         mkdir dist
         copy target\*.jar dist\ShowSequencer-JavaFX.jar
-
-    - name: Copy icon to dist
-      run: copy src\icon.ico dist\icon.ico
+        copy src\icon.ico dist\icon.ico
 
     - name: Package MSI using jpackage
       run: |
@@ -53,9 +54,22 @@ jobs:
     - name: Zip project contents
       run: powershell Compress-Archive -Path dist\* -DestinationPath release-artifacts.zip
 
-    - name: Upload to GitHub Release
+    - name: Generate date-based tag and push
+      id: tag
+      run: |
+        $date = Get-Date -Format "yyyy-MM-dd"
+        $tag = "release-$date"
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        git tag $tag
+        git push origin $tag
+        echo "tag_name=$tag" >> $env:GITHUB_ENV
+
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: ${{ env.tag_name }}
+        name: Release ${{ env.tag_name }}
         files: |
           dist\*.msi
           dist\ShowSequencer-JavaFX.jar
