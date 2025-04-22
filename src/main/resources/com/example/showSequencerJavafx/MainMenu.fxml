@@ -26,6 +26,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
@@ -1840,6 +1841,14 @@
       </AnchorPane>
    </center>
    <bottom>
-      <Pane prefHeight="25.0" prefWidth="1479.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER" />
+      <Pane prefHeight="25.0" prefWidth="1479.0" style="-fx-background-color: grey;" BorderPane.alignment="CENTER">
+         <children>
+            <Circle fx:id="statusCircle" fill="#a1a1a1" layoutX="17.0" layoutY="13.0" radius="8.0" stroke="BLACK" strokeType="INSIDE" />
+            <Button alignment="CENTER" graphicTextGap="0.0" layoutX="31.0" layoutY="1.0" mnemonicParsing="false" onAction="#refreshUSB" prefHeight="23.0" prefWidth="26.0" style="-fx-min-height: 0; -fx-min-width: 0; -fx-padding: 0;" text="↻">
+               <font>
+                  <Font name="Arial" size="21.0" />
+               </font>
+            </Button>
+         </children></Pane>
    </bottom>
 </BorderPane>
