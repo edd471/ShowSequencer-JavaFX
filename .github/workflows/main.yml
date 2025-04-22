@@ -1,66 +1,64 @@
-name: Build and Package with jpackage
+name: Build JAR and Release MSI
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
 
 jobs:
-  package:
-    runs-on: windows-latest  # Set to `macos-latest` or `ubuntu-latest` if needed
+  build:
+    runs-on: windows-latest
 
-    permissions:
-      contents: write
-    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: '17'
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
 
-      - name: Install JavaFX
-        run: |
-          Invoke-WebRequest -Uri "https://download2.gluonhq.com/openjfx/22.0.1/openjfx-22.0.1_windows-x64_bin-sdk.zip" -OutFile "javafx-sdk.zip"
-          Expand-Archive -Path javafx-sdk.zip -DestinationPath .
-          echo "JAVA_FX_PATH=$(pwd)\javafx-sdk-22.0.1\lib" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+    - name: Build JAR with Maven
+      run: mvn clean package -DskipTests
 
-      - name: Create Output Directories
-        run: |
-          New-Item -ItemType Directory -Path out/artifacts/ShowSequencer_JavaFX_jar -Force
-          New-Item -ItemType Directory -Path out/classes -Force
+    - name: Set up JavaFX jmods
+      run: |
+        curl -L -o javafx.zip https://download2.gluonhq.com/openjfx/22.0.1/openjfx-22.0.1_windows-x64_bin-jmods.zip
+        unzip javafx.zip -d javafx-jmods
 
-      - name: Compile Java Source Files
-        run: |
-          javac --module-path "$env:JAVA_FX_PATH" --add-modules javafx.controls,javafx.media,javafx.fxml -d out/classes $(Get-ChildItem -Path src/main/java/com/example/showSequencerJavafx/ -Filter *.java | ForEach-Object { $_.FullName })
-          jar cf out/artifacts/ShowSequencer_JavaFX_jar/ShowSequencer-JavaFX.jar -C out/classes .
+    - name: Copy JAR to root with desired name
+      run: |
+        mkdir dist
+        copy target\*.jar dist\ShowSequencer-JavaFX.jar
 
-      - name: Create Custom JDK Runtime with JavaFX
-        run: |
-          jlink --module-path "$env:JAVA_HOME\jmods;$env:JAVA_FX_PATH" `
-                --add-modules java.base,java.desktop,javafx.controls,javafx.media,javafx.fxml `
-                --output custom-runtime
-          echo "RUNTIME_PATH=$(pwd)\custom-runtime" | Out-File -Append -Encoding utf8 $env:GITHUB_ENV
+    - name: Copy icon to dist
+      run: copy icon.ico dist\icon.ico
 
-      - name: Run jpackage (without --add-modules)
-        run: |
-          jpackage -t msi --name "ShowSequencer" `
-            --input out/artifacts/ShowSequencer_JavaFX_jar/ `
-            --main-jar ShowSequencer-JavaFX.jar `
-            --main-class com.example.showSequencerJavafx.ShowSequencer `
-            --win-menu --win-shortcut `
-            --runtime-image "$env:RUNTIME_PATH" `
-            --icon src/main/resources/icon.ico `
-            --dest output/
+    - name: Package MSI using jpackage
+      run: |
+        jpackage `
+          -t msi `
+          --name "ShowSequencer" `
+          --input dist `
+          --main-jar ShowSequencer-JavaFX.jar `
+          --main-class com.example.showSequencerJavafx.ShowSequencer `
+          --win-menu `
+          --win-shortcut `
+          --module-path javafx-jmods\javafx-jmods-22.0.1 `
+          --add-modules javafx.controls,javafx.media,javafx.fxml `
+          --icon dist\icon.ico `
+          --dest dist
 
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
-          draft: false
-          prerelease: false
-          files: output/*
+    - name: Zip project contents
+      run: powershell Compress-Archive -Path dist\* -DestinationPath release-artifacts.zip
+
+    - name: Upload to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist\*.msi
+          dist\ShowSequencer-JavaFX.jar
+          release-artifacts.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
