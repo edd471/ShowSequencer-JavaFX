@@ -18,7 +18,7 @@ import java.util.concurrent.Executors;
 public class FaderManager {
 
     private MidiAlivePing midiAlivePing;
-    private final Shape statusCircle;
+    private Shape statusCircle;
     private MidiDevice receiverDevice = null;
     private MidiDevice transmitterDevice = null;
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -43,11 +43,14 @@ public class FaderManager {
     /**
      * Constructor for fader manage. Populates fader list with default values
      */
-    public FaderManager(Shape statusCircle) {
-        this.statusCircle = statusCircle;
+    public FaderManager() {
         for (int i = 0; i < 32; i++) {
             faderList.add(new Fader(i+1, "", false, i+1, true));
         }
+    }
+
+    public void setStatusCircle(Shape statusCircle){
+        this.statusCircle = statusCircle;
     }
 
     /**Getter for fader list
