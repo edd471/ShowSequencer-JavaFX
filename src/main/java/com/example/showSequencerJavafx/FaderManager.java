@@ -104,6 +104,12 @@ public class FaderManager {
         }
     }
 
+    public void disconnect(){
+        if(receiverDevice != null && receiverDevice.isOpen()) receiverDevice.close();
+        if(transmitterDevice != null && transmitterDevice.isOpen()) transmitterDevice.close();
+        if(midiAlivePing != null) midiAlivePing.stop();
+    }
+
     public void reconnect() {
         statusCircle.setFill(Color.GRAY);
         try {

@@ -51,6 +51,11 @@ public class ShowSequencer extends Application {
         });
     }
 
+    @Override
+    public void stop() {
+        System.exit(0);
+    }
+
     public static Stage getStage(){
         return thisStage;
     }
