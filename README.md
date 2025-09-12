@@ -1,0 +1,1 @@
+jpackage --type msi --input . --name "ShowSequencer" --main-jar ShowSequencer-JavaFX.jar --main-class com.example.showSequencerJavafx.ShowSequencer --win-menu --win-shortcut --module-path "C:\Program Files\JavaFX\javafx-jmods-22.0.1" --add-modules javafx.controls,javafx.media,javafx.fxml --icon icon.ico
