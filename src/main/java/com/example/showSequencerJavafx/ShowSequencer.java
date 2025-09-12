@@ -60,6 +60,7 @@ public class ShowSequencer extends Application {
         return thisStage;
     }
 
+
     public static void main(String[] args) {
         launch();
     }

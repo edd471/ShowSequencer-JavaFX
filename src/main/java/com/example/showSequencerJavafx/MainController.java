@@ -55,6 +55,8 @@ public class MainController implements Initializable {
     public double MIN_FADE_TIME = 0.1;
     public final Map<COMMAND, Color> commandColorMap = new HashMap<>();
     public final Map<Double, Color> dBColorMap = new HashMap<>();
+    public List<KeyCode> keyCodeBindings = new ArrayList<>();
+    public final List<Runnable> boundFunctions = new ArrayList<>();
 
     private File projectFile = null;
     private Preferences preferences;
@@ -367,6 +369,12 @@ public class MainController implements Initializable {
         dBColorMap.put((double) 5, Color.BLACK);
         dBColorMap.put((double) 10, Color.BLACK);
 
+        boundFunctions.addAll(Arrays.asList(this::cueListNext, this::cueListPrevious,
+                this::runScreenAllOff, this::showModeBtn, this::pausePlayPlaylist, this::playlistNextTrack,
+                this::playlistPrevTrack, this::stopPlaylistPressed));
+
+        keyCodeBindings.addAll(Arrays.asList(null, null, null, null, null, null, null, null));
+
         comboBoxCueJump.setConverter(new StringConverter<>() {
             @Override
             public String toString(Cue cue) {
@@ -631,6 +639,16 @@ public class MainController implements Initializable {
             Platform.runLater(()->openShow(new File(currentProjectDir)));
         }
 
+        Platform.runLater(()->ShowSequencer.getStage().getScene().setOnKeyPressed(this::keyPressed));
+
+    }
+
+    private void keyPressed(KeyEvent event){
+        for(int i = 0; i < keyCodeBindings.size(); i++){
+            if(keyCodeBindings.get(i) == event.getCode()){
+                boundFunctions.get(i).run();
+            }
+        }
     }
 
     @FXML
@@ -733,6 +751,8 @@ public class MainController implements Initializable {
         dBColorMap.put((double) 5, preferences.color5);
         dBColorMap.put((double) 10, preferences.color10);
 
+        keyCodeBindings = preferences.keyCodeBindings;
+
         savePreferences();
 
     }
@@ -815,6 +835,16 @@ public class MainController implements Initializable {
                 book7.appendChild(document.createTextNode("null"));
             }
 
+            Element book8 = document.createElement("KeyBinds");
+            for(KeyCode keyCode : keyCodeBindings){
+                Element keyBindElement = document.createElement("KeyBind");
+                if(keyCode!=null){
+                    keyBindElement.appendChild(document.createTextNode(keyCode.toString()));
+                }else{
+                    keyBindElement.appendChild(document.createTextNode("..."));
+                }
+                book8.appendChild(keyBindElement);
+            }
 
             root.appendChild(book1);
             root.appendChild(book2);
@@ -823,6 +853,7 @@ public class MainController implements Initializable {
             root.appendChild(book5);
             root.appendChild(book6);
             root.appendChild(book7);
+            root.appendChild(book8);
 
             // Write to XML file
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -843,10 +874,7 @@ public class MainController implements Initializable {
             refreshRunScreen();
 
         }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Save Failed");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
+            showError("Save Failed", e.getLocalizedMessage());
         }
     }
 
@@ -906,9 +934,7 @@ public class MainController implements Initializable {
         }
 
         if(!found && !document.getElementsByTagName("MidiDevice").item(0).getTextContent().equals("null")){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("Midi Device Not Found");
-            alert.showAndWait();
+            showError("Midi Device Not Found", "");
 
             faderManager.setReceiverDevice(null);
         }
@@ -920,6 +946,17 @@ public class MainController implements Initializable {
                 faderNameColumns.get(i).setText(faderManager.getFaderList().get(i).getName());
             }
             faderNameColumns.get(i).setVisible(faderManager.getFaderList().get(i).getIsVisible().get());
+        }
+
+        keyCodeBindings.clear();
+
+        NodeList keyBindList = document.getElementsByTagName("KeyBind");
+        for(int i=0; i<keyBindList.getLength(); i++){
+            if(Objects.equals(keyBindList.item(i).getTextContent(), "...")){
+                keyCodeBindings.add(null);
+            }else{
+                keyCodeBindings.add(KeyCode.getKeyCode(keyBindList.item(i).getTextContent()));
+            }
         }
 
     }
@@ -970,10 +1007,7 @@ public class MainController implements Initializable {
         }
 
         if(!assertionPass){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("FILES NOT FOUND!");
-            alert.setContentText("Please check your SFX/Playlist directory's are valid then click \"Ok\" to restart");
-            alert.showAndWait();
+            showError("FILES NOT FOUND!", "Please check your SFX/Playlist directory's are valid then click \"Ok\" to restart");
 
             saveShow();
 
@@ -1028,6 +1062,21 @@ public class MainController implements Initializable {
 
             openShow(selectedFile);
         }
+    }
+
+    public void showError(String title, String message){
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(title);
+
+        TextArea textArea = new TextArea(message);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+
+        alert.getDialogPane().setContent(textArea);
+        alert.showAndWait();
     }
 
 
@@ -1134,8 +1183,6 @@ public class MainController implements Initializable {
                 }
             }
 
-
-
             cueListTableAudio.setItems(cuesManager.getCues());
             cueListTableFaders.setItems(cuesManager.getCues());
 
@@ -1156,10 +1203,8 @@ public class MainController implements Initializable {
             alert.showAndWait();
 
         }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Load Failed");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
+            showError("Load Failed", e.getLocalizedMessage());
+
             newShow();
         }
     }
@@ -1294,10 +1339,7 @@ public class MainController implements Initializable {
             alert.showAndWait();
 
         }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setHeaderText("Save Failed");
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
+            showError("Save Failed", e.getLocalizedMessage());
         }
 
     }

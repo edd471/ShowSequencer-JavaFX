@@ -2,6 +2,7 @@ package com.example.showSequencerJavafx;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -9,6 +10,7 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 import javafx.util.converter.IntegerStringConverter;
@@ -29,6 +31,7 @@ public class PreferencesController implements Initializable {
     public Color colorNone, colorPLAY, colorSTOP, colorVOLUME, colorSTOP_ALL, colorPLAYLIST_START, colorPLAYLIST_CONT, colorPLAYLIST_FADE;
     public Color colorINF, colorN40, colorN30, colorN20, colorN15, colorN10, colorN75, colorN5, colorN3, color0, color3, color5, color10;
     public ObservableList<Fader> tempFaderList = FXCollections.observableArrayList();
+    public List<KeyCode> keyCodeBindings = new ArrayList<>();
 
     @FXML
     private TextField txtMinFadeTime, txtRunScreenFadeTime, txtPlaylistFadeTime;
@@ -50,6 +53,12 @@ public class PreferencesController implements Initializable {
     private TableColumn<Fader, Integer> colFaderValue;
     @FXML
     private TableColumn<Fader, Boolean> colIsVisible;
+    @FXML
+    private Button btnNextCueBind, btnPrevCueBind, btnFadeAllBind, btnShowModeBind, btnPlaylistPlayBind, btnPlaylistNextBind, btnPlaylistPrevBind, btnPlaylistStopBind;
+    private List<Button> bindingButtons = new ArrayList<>();
+
+
+
 
 
 
@@ -188,7 +197,50 @@ public class PreferencesController implements Initializable {
         picker10.setValue(mainController.dBColorMap.get((double)10));
         color10 = mainController.dBColorMap.get((double)10);
 
+        keyCodeBindings = mainController.keyCodeBindings;
+        bindingButtons = Arrays.asList(btnNextCueBind, btnPrevCueBind, btnFadeAllBind, btnShowModeBind, btnPlaylistPlayBind, btnPlaylistNextBind, btnPlaylistPrevBind, btnPlaylistStopBind);
 
+        for(int i = 0; i < keyCodeBindings.size(); i++){
+            KeyCode keyCode = keyCodeBindings.get(i);
+            if(keyCode!=null){
+                bindingButtons.get(i).setText(keyCode.toString());
+            } else{
+                bindingButtons.get(i).setText("...");
+            }
+
+        }
+
+    }
+
+    private void setKeyBind(KeyCode key, Button btn){
+
+        if (key == KeyCode.ESCAPE) {
+            btn.setText("...");
+            key = null;
+        } else{
+            for(int i = 0; i < keyCodeBindings.size(); i++){
+                if(keyCodeBindings.get(i) == key){
+                    keyCodeBindings.set(i, null);
+                    bindingButtons.get(i).setText("...");
+                }
+            }
+            btn.setText(key.toString());
+        }
+
+        keyCodeBindings.set(bindingButtons.indexOf(btn), key);
+
+
+    }
+
+    @FXML
+    protected void changeKeybinding(ActionEvent event) {
+        Button btn = (Button) event.getSource();
+
+        Alert alert = new Alert(Alert.AlertType.NONE);
+        alert.setTitle("Change KeyBinding");
+        alert.setContentText("Press Key to set binding, Press ESC to remove binding.");
+        alert.getDialogPane().getScene().setOnKeyPressed(keyEvent -> {setKeyBind(keyEvent.getCode(), btn); alert.getDialogPane().getButtonTypes().add(ButtonType.CLOSE); alert.close();});
+        alert.showAndWait();
     }
 
     @FXML
@@ -199,10 +251,7 @@ public class PreferencesController implements Initializable {
             faderConfigTable.refresh();
 
         } catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setHeaderText("Connection to MIDI device failed");
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            mainController.showError("Connection to MIDI device failed", e.getLocalizedMessage());
         }
     }
 
@@ -246,9 +295,7 @@ public class PreferencesController implements Initializable {
 
             PreferencesScreen.getStage().close();
         }catch (Exception e){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText(e.getLocalizedMessage());
-            alert.showAndWait();
+            mainController.showError("", e.getLocalizedMessage());
         }
 
     }
